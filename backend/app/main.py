@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.contracts.routes import router as contracts_router
+from app.worker.routes import router as worker_router
 
 app = FastAPI(
     title="Rule Zero API",
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(contracts_router)
+app.include_router(worker_router)
 
 
 class HealthResponse(BaseModel):

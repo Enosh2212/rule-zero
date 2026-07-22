@@ -64,6 +64,14 @@ Task Contract API:
 POST http://localhost:8000/api/contracts/parse
 ```
 
+Worker proposal API:
+
+```text
+POST http://localhost:8000/api/worker/propose
+```
+
+The Phase 3 worker is a deterministic, stateless simulator. It emits typed proposals only; it cannot change the cart, cross checkout, submit an order, or make a payment.
+
 The frontend uses `NEXT_PUBLIC_API_URL` and safely defaults to `http://localhost:8000` for local development. Copy `frontend/.env.example` to `frontend/.env.local` only when you need to override that URL.
 
 ### Tests
@@ -79,4 +87,4 @@ No consequential action should execute only because a model requested it. Rule Z
 
 ## Status
 
-Phase 2 — deterministic Task Contract Engine. The contract preview is display-only and is not connected to cart execution or interception.
+Phase 3 — deterministic Worker Action Protocol. Worker output is proposal-only; Rule Zero evaluation and action execution are reserved for later phases.

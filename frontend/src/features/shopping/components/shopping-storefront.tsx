@@ -3,7 +3,8 @@
 import { useReducer, useState } from "react";
 import Link from "next/link";
 
-import { TaskContractPanel } from "@/features/contracts/components/task-contract-panel";
+import { TaskContractPanel } from "../../contracts/components/task-contract-panel";
+import { WorkerAgentPanel } from "../../worker/components/worker-agent-panel";
 
 import { applyCartAction, initialCartState } from "../cart";
 import { calculateCartTotals, formatInr } from "../pricing";
@@ -22,7 +23,7 @@ export function ShoppingStorefront() {
       <header className="border-b border-white/10 bg-black/20">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4 sm:px-10">
           <Link href="/" className="font-semibold tracking-[0.2em]">RULE ZERO</Link>
-          <div className="flex items-center gap-3 text-xs"><span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-200">Phase 2 · contract preview</span><span className="text-zinc-500">No real checkout</span></div>
+          <div className="flex items-center gap-3 text-xs"><span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-violet-200">Phase 3 · proposal protocol</span><span className="text-zinc-500">No real checkout</span></div>
         </div>
       </header>
 
@@ -33,6 +34,8 @@ export function ShoppingStorefront() {
         </section>
 
         <TaskContractPanel />
+
+        <div className="mt-8"><WorkerAgentPanel /></div>
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-8"><ProductCatalogue products={shoppingTrapScenario.products} quantities={cart.quantities} dispatch={dispatch} /><EvidenceDrawer scenario={shoppingTrapScenario} /></div>

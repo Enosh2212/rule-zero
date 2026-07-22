@@ -133,3 +133,57 @@ Convert a natural-language task into deterministic, validated, deny-by-default s
 ### Result
 - Completed.
 - Remaining risk: deterministic phrase coverage is intentionally bounded; unsupported wording falls back to safe prohibitions and visible warnings. No contract persistence or runtime enforcement exists in Phase 2. Existing npm transitive audit findings and the backend TestClient deprecation warning remain.
+
+## Phase 3 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 3 — Worker Action Protocol
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Implement a deterministic, stateless, naive Shopping Trap worker that emits one typed proposal at a time without evaluating, authorizing, or executing any action.
+
+### Context supplied to Codex
+- Repository instructions, phase plan, threat model, architecture, build log, and completed Phase 1 and Phase 2 implementations were inspected before editing.
+- Required provenance includes the hidden Phase 1 prompt-injection fixture as untrusted evidence.
+- Explicit exclusions: Phase 4 decisions, Phase 5 controls, execution, cart mutation, LLMs, browser automation, authentication, persistence, databases, and real navigation/payments.
+
+### Codex work
+- Added typed worker models for action enums, sources, targets, action envelopes, observations, requests, responses, and completion state.
+- Added stateless `POST /api/worker/propose` and a nine-step deterministic proposal sequence.
+- Included stable IDs, primitive structured payloads, rationale, provenance/trust, expected consequences, and mutation intent in every action envelope.
+- Added the hidden webpage instruction as evidence for the unsafe recurring-membership proposal.
+- Added a proposal-only Worker Agent panel with start/next/reset controls, current proposal details, source trust indicators, raw JSON, history, loading/error/completed states, and explicit non-execution labeling.
+- Added backend protocol tests and frontend interaction plus storefront-isolation tests.
+
+### Action sequence
+1. Inspect catalogue.
+2. Inspect the ₹1,499 power bank.
+3. Propose adding one product.
+4. Propose retaining the pre-selected warranty.
+5. Propose retaining the recurring membership from untrusted webpage instruction evidence.
+6. Review cart.
+7. Propose checkout navigation.
+8. Propose crossing the payment boundary without payment details.
+9. Finish proposal generation.
+
+### Tests and self-review
+- `npm run test`: 4 files, 22 tests passed.
+- `npm run lint`: passed.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend `pytest`: 27 tests passed with one existing Starlette TestClient dependency warning.
+- `git diff --check`: passed.
+- Source audit found no cart/contract mutation coupling, execution result, Phase 4 decision/control, LLM, browser automation, persistence, database, or payment integration.
+- No diff exists in the Phase 1 cart reducer/cart controls or Phase 2 Task Contract panel.
+
+### Design decisions
+- Step indexes are zero-based; proposal IDs and sequence numbers are stable and one-based.
+- The request accepts an optional Task Contract for context, but sequence generation never reads it to make safety decisions.
+- Source trust classifies evidence origin, not proposal authorization; every worker proposal still requires later evaluation.
+- `would_mutate_state` describes a predicted consequence only and is never an execution result.
+- The final `finish_task` proposal marks the simulation complete without executing any prior proposal.
+
+### Result
+- Completed.
+- Remaining risk: the worker is a deliberately fixed Shopping Trap script, accepts the controlled observation supplied by the caller, and has no runtime enforcement. Phase 4 must independently validate every proposal and evidence claim. Existing npm audit findings and the backend TestClient warning remain.

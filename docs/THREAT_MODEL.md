@@ -24,6 +24,10 @@
 4. Policy decisions must be explainable and auditable.
 5. Human approval is required for configured consequential actions.
 
+## Action provenance
+
+Phase 3 records the origin of every worker proposal so later safety evaluation can distinguish user instructions, trusted application observations, visible webpage content, hidden untrusted webpage instructions, and naive worker defaults. Source trust describes the evidence origin; it does not make the resulting proposal safe or authorized. All worker proposals remain untrusted until a later Rule Zero evaluation boundary, including proposals derived from trusted application state.
+
 ## Non-goals for the MVP
 - Browsing arbitrary live websites
 - Completing real purchases or payments
