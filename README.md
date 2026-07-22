@@ -58,6 +58,14 @@ uvicorn app.main:app --reload --port 8000
 
 Health check: `http://localhost:8000/health`
 
+Task Contract API:
+
+```text
+POST http://localhost:8000/api/contracts/parse
+```
+
+The frontend uses `NEXT_PUBLIC_API_URL` and safely defaults to `http://localhost:8000` for local development. Copy `frontend/.env.example` to `frontend/.env.local` only when you need to override that URL.
+
 ### Tests
 
 ```powershell
@@ -71,4 +79,4 @@ No consequential action should execute only because a model requested it. Rule Z
 
 ## Status
 
-Phase 0 — foundation and build contract.
+Phase 2 — deterministic Task Contract Engine. The contract preview is display-only and is not connected to cart execution or interception.

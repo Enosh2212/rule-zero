@@ -92,3 +92,44 @@ Align the deterministic Shopping Trap with the agreed ₹1,500 maximum budget wi
 ### Result
 - Completed.
 - Remaining risk: no new limitation introduced; the previously recorded dependency audit findings and absence of an automated browser interaction suite remain.
+
+## Phase 2 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 2 — Task Contract Engine
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Convert a natural-language task into deterministic, validated, deny-by-default safety contract schema `1.0`, expose it through an API, and render it as a display-only shopping-demo panel.
+
+### Context supplied to Codex
+- Required repository, architecture, threat-model, phase, build-log, and completed Phase 1 files were inspected before editing.
+- Default instruction: buy a power bank under ₹1,500, prohibit subscriptions and personal-data sharing, and stop before payment.
+- Explicit exclusions: Phase 3 worker/action protocol, cart interception/execution, LLMs, browser automation, authentication, databases, and external payment/commerce APIs.
+
+### Codex work
+- Added seven requested Pydantic models, stable request/response schema, and deterministic parsing for supported budget syntax, permissions, restrictions, warnings, completeness, and confidence.
+- Added `POST /api/contracts/parse` with malformed-request validation and deny-by-default behavior.
+- Added a typed frontend API client and display-only Task Contract panel with editable instruction, loading/error states, preview, budget, action badges, approval requirements, and warnings.
+- Added backend parser/API coverage and frontend DOM component coverage.
+- Documented architecture, local environment configuration, status, and the reusable Phase 2 prompt.
+
+### Tests and self-review
+- `npm run test`: 3 files, 12 tests passed.
+- `npm run lint`: passed.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend `pytest`: 14 tests passed with one existing Starlette TestClient dependency warning.
+- Initial backend test run found one unsupported phrase variant (`leaving the site`); the deterministic rule was corrected to recognize `leave` and `leaving`.
+- Initial frontend test run exposed missing Vitest resolution for a Next.js alias; the component's shared-pricing import was changed to an explicit relative import.
+- `git diff --check` passed. Review confirmed no changes to the Phase 1 cart reducer or cart-control components and no Worker/ProposedAction/execution implementation.
+
+### Design decisions
+- Budget amounts are integer major currency units with explicit `INR` currency and `less_than_or_equal` comparison.
+- Multiple budget values are ambiguous; the lowest recognized value is retained and warned.
+- Missing payment, submission, subscription, recurring-payment, and sensitive-data permissions are denied and warned; external navigation requires approval.
+- The panel stores only transient browser UI state and never connects its contract to cart dispatch.
+
+### Result
+- Completed.
+- Remaining risk: deterministic phrase coverage is intentionally bounded; unsupported wording falls back to safe prohibitions and visible warnings. No contract persistence or runtime enforcement exists in Phase 2. Existing npm transitive audit findings and the backend TestClient deprecation warning remain.

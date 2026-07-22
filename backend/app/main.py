@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from app.contracts.routes import router as contracts_router
+
 app = FastAPI(
     title="Rule Zero API",
     version="0.1.0",
@@ -15,6 +17,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(contracts_router)
 
 
 class HealthResponse(BaseModel):

@@ -11,7 +11,7 @@ export default function Home() {
       <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-10 sm:px-10">
         <nav className="flex items-center justify-between border-b border-white/10 pb-5">
           <div className="text-sm font-semibold tracking-[0.24em]">RULE ZERO</div>
-          <span className="rounded-full border border-white/15 px-3 py-1 text-xs text-zinc-400">Phase 1</span>
+          <span className="rounded-full border border-white/15 px-3 py-1 text-xs text-zinc-400">Phase 2</span>
         </nav>
 
         <section className="grid flex-1 items-center gap-14 py-16 lg:grid-cols-[1.25fr_0.75fr]">
@@ -28,7 +28,7 @@ export default function Home() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <a href="/demo/shopping" className="rounded-lg bg-zinc-100 px-5 py-3 text-sm font-medium text-zinc-950">
-                Shopping demo — Phase 1
+                Shopping demo — Phase 2
               </a>
               <span className="rounded-lg border border-white/15 px-5 py-3 text-sm text-zinc-500">
                 Repository link pending
