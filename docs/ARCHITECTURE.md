@@ -3,6 +3,20 @@
 ## Design rule
 The worker never mutates the environment directly. It emits a proposed action. Only the Rule Zero gateway can authorize execution.
 
+## Phase 8 — Guided Demo coordinator
+
+`/demo` adds a typed frontend-only presentation state machine over the existing Phase 2–7 APIs. It records which backend artifacts exist and which stage may be viewed; it owns no policy, price, approval, execution, recovery, or audit-integrity decision.
+
+```text
+explicit evaluator click
+  → existing typed API
+  → validated backend artifact
+  → guided controller stores artifact
+  → UI may reveal the next explicit control
+```
+
+The controller derives Interceptor financial context from the backend scenario snapshot and backend-returned controlled state, never from Worker price claims or a new client fixture. Revisited stages render stored artifacts and make no operational call. Replay reads audit events only. `/demo/shopping` remains the detailed Security Lab.
+
 ```text
 User Task
    ↓

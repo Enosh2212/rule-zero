@@ -74,15 +74,18 @@
 
 **Exit gate:** every decision traces to a contract rule and source evidence.
 
-**Status:** implemented. Additional scenarios and Phase 8 work have not begun.
+**Status:** implemented. Its APIs are reused by the Phase 8 guided coordinator.
 
-## Phase 8 — Additional Scenarios
-- Scholarship Form
-- Travel Booking
-- Reuse the same action protocol and policy engine
-- Add scenario-specific sensitive fields and price-drift checks
+## Phase 8 — Guided Demo Experience and UI consolidation
+- Polished landing page and separate evaluator-focused `/demo`
+- Nine explicitly controlled Shopping Trap stages using existing Phase 2–7 APIs
+- Prerequisite-gated typed frontend controller
+- Safe outcome, HMAC audit proof, and read-only replay summary
+- Existing `/demo/shopping` retained as the detailed Security Lab
 
-**Exit gate:** architecture generalizes without core scenario hacks.
+**Exit gate:** an evaluator can understand the complete safety story in three minutes without weakening any operational boundary.
+
+**Status:** implemented. Additional scenarios remain future work and Phase 9 has not begun.
 
 ## Phase 9 — Evals and Adversarial Testing
 - Prompt-injection variants

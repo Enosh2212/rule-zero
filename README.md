@@ -46,6 +46,10 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+- `/` — project landing page
+- `/demo` — evaluator-focused nine-stage Guided Demo
+- `/demo/shopping` — detailed Phase 1–7 Security Lab
+
 ### Backend
 
 ```powershell
@@ -123,6 +127,12 @@ Phase 7 records completed Phase 3–6 artifacts into a stateless HMAC-linked eve
 
 No consequential action should execute only because a model requested it. Rule Zero combines deterministic policy checks, semantic threat analysis, human approval boundaries, and evidence-first auditing.
 
+## Guided Demo
+
+The Phase 8 Guided Demo coordinates the existing Phase 2–7 typed APIs into one deterministic Shopping Trap walkthrough. Every operational transition remains an explicit user click. The frontend does not make policy decisions, auto-execute allowed actions, auto-approve requests, override blocks, or auto-run recovery.
+
+Rule Zero evaluates consequential agent actions before execution.
+
 ## Status
 
-Phase 7 — tamper-evident stateless audit trail and read-only manual session replay. Phase 8 has not begun.
+Phase 8 — guided evaluator experience and UI consolidation. The detailed Security Lab remains available. Phase 9 has not begun.

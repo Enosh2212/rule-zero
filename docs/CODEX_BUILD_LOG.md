@@ -352,3 +352,48 @@ Record completed Phase 3–6 typed results into a stateless cryptographically li
 ### Result
 - Completed.
 - Remaining risk: the stateless client can omit completed artifacts, so HMAC proves integrity of the submitted chain rather than independent completeness. No durable retention or external timestamp/non-repudiation service exists.
+
+## Phase 8 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 8 — Guided Demo Experience and UI consolidation
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Create a polished nine-stage evaluator journey while retaining the Phase 1–7 Security Lab and every existing safety boundary.
+
+### Codex work
+- Added a landing page and separate `/demo` guided route.
+- Added a typed prerequisite-gated frontend controller, responsive three-panel workspace, explicit controls, safe outcome, audit proof, and read-only replay.
+- Reused existing contract, Worker, Interceptor, Gate, approval, recovery, and audit APIs; no backend business logic was duplicated.
+- Derived financial context from backend scenario/state artifacts, never Worker price claims.
+- Preserved `/demo/shopping` and added a Guided Demo/Security Lab mode switch.
+- Added landing, controller gating/reset, inert start, backend start/error, semantic progress, and forbidden-control tests.
+
+### Security decisions
+- Reset is frontend-only and inert; another explicit Start loads fresh state.
+- Revisited stages do not repeat operations.
+- BLOCK exposes no execution, approval, or override.
+- Audit failure is independent and manually retryable without repeating the completed operation.
+- No Phase 9, auto-run, LLM, browser automation, authentication, persistence, or real-world commerce was added.
+
+### Verification
+- `npm run test`: 12 files, 62 tests passed.
+- `npm run lint`: passed without warnings.
+- `npm run build`: passed; `/`, `/demo`, and `/demo/shopping` generated.
+- Backend `.venv\Scripts\python.exe -m pytest`: 96 tests passed with one existing Starlette TestClient deprecation warning.
+- Bare `pytest` was unavailable on the PowerShell PATH; the repository virtual environment completed the same requested suite.
+
+## Phase 8 acceptance closure
+
+- Added one mocked integration-level frontend test covering all nine guided stages from explicit start through HMAC verification and read-only replay.
+- Asserted Worker step indexes `2`, `4`, `6`, `7`, and `8`, five explicit evaluations, three controlled execution requests, one explicit approval, and exactly one recovery-step execution.
+- Proved ALLOW does not auto-execute, ASK APPROVAL does not auto-approve, BLOCK exposes no execution/override path, and stage revisits/replay make no operational calls.
+- Injected one audit append failure after successful product execution; the controlled backend state remained at v1, the operation was not repeated, and only the audit artifact was manually retried.
+- Confirmed the original Task Contract is passed unchanged through evaluation and approval boundaries.
+- `npm run test`: 13 files, 63 tests passed.
+- `npm run lint`: passed without warnings after removing one unused test import.
+- `npm run build`: passed; `/`, `/demo`, and `/demo/shopping` generated.
+- Backend pytest through the repository virtual environment: 96 tests passed with one existing Starlette TestClient deprecation warning.
+- `git diff --check`: passed.

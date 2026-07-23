@@ -48,3 +48,7 @@ The entire client-carried session and every submitted artifact are untrusted. Ap
 - Claiming perfect prompt-injection detection
 - Inferring criminal intent or assigning blame
 - Storing real Aadhaar, card, password, or OTP data
+
+## Phase 8 guided-controller threats
+
+The guided controller is presentation state, not authority. Stage readiness cannot authorize an action, frontend status labels cannot manufacture a decision, and client navigation cannot mutate canonical state. Every proposal, evaluation, execution, approval, recovery, and verification result comes from its existing backend boundary. BLOCK never exposes execution or approval, ASK APPROVAL never auto-approves, and recovery never auto-runs. Audit recording failure is separated from the completed operation so retrying evidence cannot repeat the consequence.
