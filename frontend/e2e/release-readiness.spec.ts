@@ -34,12 +34,12 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto("/demo");
     await expect(page.getByRole("navigation")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Shopping Trap Guided Demo" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Start Guided Demo" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Volt Supply" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run Shopping Agent" })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     expect(overflow).toBe(false);
-    const startBox = await page.getByRole("button", { name: "Start Guided Demo" }).boundingBox();
-    const resetBox = await page.getByRole("button", { name: "Reset Demo" }).boundingBox();
+    const startBox = await page.getByRole("button", { name: "Run Shopping Agent" }).boundingBox();
+    const resetBox = await page.getByRole("button", { name: "Reset" }).boundingBox();
     expect(startBox).not.toBeNull();
     expect(resetBox).not.toBeNull();
     if (startBox && resetBox) {
@@ -59,8 +59,8 @@ test("keyboard and accessibility smoke", async ({ page }) => {
   });
   expect(focusStyle).not.toContain("none:0px:none");
   await expect(page.getByText(/This is a controlled simulation/i)).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start Guided Demo" })).toHaveAccessibleName("Start Guided Demo");
-  await expect(page.getByRole("button", { name: /3.*Safe Product Action/ })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Run Shopping Agent" })).toHaveAccessibleName("Run Shopping Agent");
+  await expect(page.getByRole("list", { name: "Demo progress" })).toContainText("MISSION");
 });
 
 test("security boundaries remain explicit through the guided browser flow", async ({ page }) => {
@@ -74,68 +74,37 @@ test("security boundaries remain explicit through the guided browser flow", asyn
   expect(operationalRequests).toEqual([]);
   await expect(page.getByText(/Run Everything|Auto Approve|Override Block|Execute Blocked Action/i)).toHaveCount(0);
 
-  await click(page, "Start Guided Demo");
-  await click(page, "Generate Safety Contract");
-  await click(page, "Continue to Next Stage");
-  await click(page, "Show Worker Proposal");
-  await click(page, "Evaluate with Rule Zero");
-  await expect(page.getByText("ALLOW", { exact: true })).toBeVisible();
+  await click(page, "Run Shopping Agent");
+  await click(page, "Check Product Safety");
+  await expect(page.getByText("RULE ZERO: ALLOW", { exact: true })).toBeVisible();
   const actionRequestsBefore = operationalRequests.filter((url) => url.includes("/api/actions/execute")).length;
-  await page.getByRole("button", { name: "Execute Allowed Action" }).evaluate((element) => {
+  await page.getByRole("button", { name: "Add Product Safely" }).evaluate((element) => {
     (element as HTMLButtonElement).click();
     (element as HTMLButtonElement).click();
   });
-  await expect(page.getByText(/Controlled state v1/)).toBeVisible();
+  await expect(page.getByText("RULE ZERO: BLOCKED", { exact: true })).toBeVisible();
   expect(operationalRequests.filter((url) => url.includes("/api/actions/execute"))).toHaveLength(actionRequestsBefore + 1);
-
-  await click(page, "Continue to Next Stage");
-  await click(page, "Show Worker Proposal");
-  await click(page, "Evaluate with Rule Zero");
-  await expect(page.getByText("BLOCK", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /override|execute blocked|approve/i })).toHaveCount(0);
 
-  await click(page, "Continue to Next Stage");
-  await click(page, "Generate Safe Recovery");
   const recoveryRequestsBefore = operationalRequests.filter((url) => url.includes("/api/recovery/execute-step")).length;
-  await page.getByRole("button", { name: "Execute Recovery Step" }).evaluate((element) => {
+  await page.getByRole("button", { name: "Continue Without Membership" }).evaluate((element) => {
     (element as HTMLButtonElement).click();
     (element as HTMLButtonElement).click();
   });
-  await expect(page.getByRole("button", { name: "Continue to Next Stage" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Payment boundary" })).toBeVisible();
   expect(operationalRequests.filter((url) => url.includes("/api/recovery/execute-step"))).toHaveLength(recoveryRequestsBefore + 1);
-
-  await click(page, "Continue to Next Stage");
-  await click(page, "Show Worker Proposal");
-  await click(page, "Evaluate with Rule Zero");
-  await expect(page.getByText("ASK APPROVAL", { exact: true })).toBeVisible();
-  await click(page, "Request Human Approval");
-  const approvalRequestsBefore = operationalRequests.filter((url) => url.includes("/api/approvals/decide")).length;
-  await page.getByRole("button", { name: "Approve once" }).evaluate((element) => {
-    (element as HTMLButtonElement).click();
-    (element as HTMLButtonElement).click();
-  });
-  await expect(page.getByText(/Controlled state v2/)).toBeVisible();
-  expect(operationalRequests.filter((url) => url.includes("/api/approvals/decide"))).toHaveLength(approvalRequestsBefore + 1);
-
-  await click(page, "Continue to Next Stage");
-  await click(page, "Show Worker Proposal");
-  await click(page, "Evaluate with Rule Zero");
-  await expect(page.getByText("BLOCK", { exact: true })).toBeVisible();
+  expect(operationalRequests.filter((url) => url.includes("/api/approvals/decide"))).toHaveLength(0);
   await expect(page.getByRole("button", { name: /approve|execute|override/i })).toHaveCount(0);
 
-  await click(page, "Continue to Next Stage");
-  await click(page, "Show Worker Proposal");
-  await click(page, "Evaluate with Rule Zero");
-  await click(page, "Finish Safely");
-  await click(page, "Continue to Next Stage");
-  await click(page, "Verify Audit Chain");
-  await expect(page.getByText("AUDIT VERIFIED")).toBeVisible();
+  await click(page, "Stop Before Payment");
+  await expect(page.getByRole("heading", { name: "Task completed safely" })).toBeVisible();
 
   const beforeReplay = operationalRequests.length;
-  await page.getByText("Read-only replay summary").click();
+  await click(page, "View Security Proof");
+  await expect(page.getByRole("complementary", { name: "Security proof" })).toBeVisible();
   expect(operationalRequests).toHaveLength(beforeReplay);
   const beforeReset = operationalRequests.length;
-  await click(page, "Reset Demo");
+  await click(page, "Restart Demo");
   expect(operationalRequests).toHaveLength(beforeReset);
   await expect(page.getByRole("link", { name: "Advanced Security Lab" })).toHaveAttribute("href", "/demo/shopping");
 });
@@ -145,7 +114,7 @@ test("backend unavailable is an accessible designed error", async ({ page }) => 
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   await page.goto("/demo");
-  await click(page, "Start Guided Demo");
-  await expect(page.getByRole("alert").filter({ hasText: "Mission failed" })).toContainText("Mission failed");
+  await click(page, "Run Shopping Agent");
+  await expect(page.getByRole("alert").filter({hasText:"Demo step failed"})).toContainText("Demo step failed");
   expect(pageErrors).toEqual([]);
 });
