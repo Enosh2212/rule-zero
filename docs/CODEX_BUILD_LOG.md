@@ -315,3 +315,40 @@ Produce deterministic, contract-preserving safe alternatives after verified fail
 ### Result
 - Completed.
 - Remaining risk: stateless operation cannot globally record plan consumption; signed content and exact state versions prevent ordinary tampering/reuse against newer state. The deterministic planner currently emits one replacement step per Shopping Trap failure class.
+
+## Phase 7 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 7 — Tamper-Evident Audit and Read-Only Replay
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Record completed Phase 3–6 typed results into a stateless cryptographically linked audit chain, verify consistency and state transitions, and replay recorded events without invoking live operations.
+
+### Codex work
+- Added typed audit actors, phases, event types, references, transitions, events, sessions, append/verification/outcome/export contracts.
+- Added canonical HMAC-SHA256 chaining with sequence, previous hash, payload digest, event count, and head-hash verification.
+- Added deterministic redaction for sensitive keys, payment/identity patterns, authorization tokens, and HTML.
+- Added observer-only start, append, verify, and JSON/Markdown export endpoints.
+- Added completed-artifact observer callbacks across Worker, Interceptor, Gate/approval, and Recovery panels without changing operational behavior.
+- Added an Audit & Replay panel with automatic post-result recording, manual retry on recording failure, chain verification, exports, outcome summary, and network-free manual replay.
+- Added backend tamper/relationship/redaction/export tests and frontend recording/replay/isolation tests.
+
+### Security decisions
+- Audit imports typed response schemas but no Worker, evaluation, execution, approval, or recovery service.
+- Server derives event type/status and rejects contradictory client decisions.
+- Raw artifacts are never stored; events contain whitelisted redacted summaries only.
+- Replay reads `AuditSession.events` and never updates the Task Contract or live controlled state.
+- No one-click runner, Phase 8 work, persistence, database, authentication, LLM, browser automation, or real-world side effect was added.
+
+### Verification
+- `npm run test`: 9 files, 56 tests passed.
+- `npm run lint`: passed without warnings after removing one unused test import.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend pytest: 96 tests passed with one existing Starlette TestClient deprecation warning.
+- `git diff --check`: passed; observer/replay forbidden-functionality audit recorded in the task handoff.
+
+### Result
+- Completed.
+- Remaining risk: the stateless client can omit completed artifacts, so HMAC proves integrity of the submitted chain rather than independent completeness. No durable retention or external timestamp/non-repudiation service exists.

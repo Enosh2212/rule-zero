@@ -25,3 +25,7 @@ The MVP is stateless. It invalidates replay against the returned newer state, bu
 ## Recovery interaction
 
 Phase 6 never calls the canonical mutation function directly. A verified recovery step is converted into the ordinary `ActionExecutionRequest` and sent through this same boundary. If it asks for approval, the existing action/state/contract-bound approval endpoint is used. Later recovery steps are not executed automatically.
+
+## Audit observation
+
+Phase 7 receives the completed `ActionExecutionResponse` only after this boundary returns. Audit validates its action/evaluation and before/after state versions, then stores a redacted summary. Audit failure never retries the execution and replay never calls this boundary.

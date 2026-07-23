@@ -17,9 +17,12 @@ type Props = Readonly<{
   executionResponse: ActionExecutionResponse | null;
   controlledState: ControlledShoppingState | null;
   onStateChange: (state: ControlledShoppingState) => void;
+  onPlanGenerated?: (plan: RecoveryPlan) => void;
+  onRecoveryExecution?: (response: RecoveryExecutionResponse) => void;
+  onApprovalResponse?: (response: ActionExecutionResponse) => void;
 }>;
 
-export function SafeRecoveryPanel({ proposedAction, contract, evaluation, executionResponse, controlledState, onStateChange }: Props) {
+export function SafeRecoveryPanel({ proposedAction, contract, evaluation, executionResponse, controlledState, onStateChange, onPlanGenerated, onRecoveryExecution, onApprovalResponse }: Props) {
   const [plan, setPlan] = useState<RecoveryPlan | null>(null);
   const [stepResult, setStepResult] = useState<RecoveryExecutionResponse | null>(null);
   const [completed, setCompleted] = useState<readonly number[]>([]);
@@ -42,10 +45,12 @@ export function SafeRecoveryPanel({ proposedAction, contract, evaluation, execut
     const boundEvaluation = evaluation;
     setLoading(true); setError(null); setSkipped(false); setStepResult(null); setCompleted([]);
     try {
-      setPlan(await generateRecoveryPlan({
+      const generated = await generateRecoveryPlan({
         scenario_id: "shopping-trap", contract: boundContract, triggering_action: boundAction,
         evaluation: boundEvaluation, execution_response: matchingExecution, current_state: boundState,
-      }));
+      });
+      setPlan(generated);
+      onPlanGenerated?.(generated);
     } catch { setError("Unable to generate a safe recovery plan from the canonical backend state."); }
     finally { setLoading(false); }
   }
@@ -57,6 +62,7 @@ export function SafeRecoveryPanel({ proposedAction, contract, evaluation, execut
       const response = await executeRecoveryStep({ scenario_id: "shopping-trap", contract, recovery_plan: plan, step_index: currentIndex, current_state: controlledState });
       setStepResult(response);
       onStateChange(response.after_state);
+      onRecoveryExecution?.(response);
       if (response.step_status === "completed") setCompleted((items) => [...items, currentIndex]);
     } catch { setError("Recovery step was refused or the controlled state is stale. Generate a fresh plan."); }
     finally { setLoading(false); }
@@ -69,6 +75,7 @@ export function SafeRecoveryPanel({ proposedAction, contract, evaluation, execut
     try {
       const response = await decideControlledApproval({ scenario_id: "shopping-trap", contract, proposed_action: currentStep.proposed_action, current_state: controlledState, approval_request_id: approval.approval_request_id, decision });
       onStateChange(response.after_state);
+      onApprovalResponse?.(response);
       setStepResult((previous) => previous ? { ...previous, execution_response: response, after_state: response.after_state, state_changed: response.state_changed, step_status: response.status === "executed" || response.status === "no_operation" ? "completed" : response.status === "rejected" ? "refused" : previous.step_status, completion_status: response.status === "executed" || response.status === "no_operation" ? plan?.completion_status ?? previous.completion_status : "in_progress" } : previous);
       if (response.status === "executed" || response.status === "no_operation") setCompleted((items) => [...items, currentIndex]);
     } catch { setError("Recovery approval could not be resolved safely."); }

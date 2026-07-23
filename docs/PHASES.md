@@ -67,13 +67,14 @@
 **Status:** implemented. Audit/replay and broader Mission Control orchestration remain future phases.
 
 ## Phase 7 — Audit, Replay, and Evidence
-- Immutable event schema
-- Session replay
-- Threat summary and protected constraints
-- Exportable JSON/HTML report
-- Separate observed facts from model inference
+- Typed tamper-evident event schema and HMAC-linked stateless session
+- Existing artifact, relationship, and state-transition validation
+- Deterministic redaction and JSON/Markdown export
+- Read-only manual replay and outcome summary
 
 **Exit gate:** every decision traces to a contract rule and source evidence.
+
+**Status:** implemented. Additional scenarios and Phase 8 work have not begun.
 
 ## Phase 8 — Additional Scenarios
 - Scholarship Form

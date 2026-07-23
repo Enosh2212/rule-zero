@@ -108,10 +108,21 @@ POST http://localhost:8000/api/recovery/execute-step
 
 The deterministic recovery planner classifies a verified failure, preserves the original Task Contract, and returns an HMAC-bound ordered plan. Each replacement action still requires an explicit click and passes through the existing Rule Zero Interceptor and Safe Action Gate. Recovery never retries payment, overrides `BLOCK`, raises the budget, or auto-approves an action.
 
+## Phase 7 Audit APIs
+
+```text
+POST http://localhost:8000/api/audit/start
+POST http://localhost:8000/api/audit/append
+POST http://localhost:8000/api/audit/verify
+POST http://localhost:8000/api/audit/export
+```
+
+Phase 7 records completed Phase 3–6 artifacts into a stateless HMAC-linked event chain. The backend validates artifact relationships and state continuity, redacts sensitive material, verifies tampering, and exports JSON or Markdown. Manual replay reads recorded events only and never invokes Worker, Interceptor, approval, execution, or recovery operations.
+
 ## Product principle
 
 No consequential action should execute only because a model requested it. Rule Zero combines deterministic policy checks, semantic threat analysis, human approval boundaries, and evidence-first auditing.
 
 ## Status
 
-Phase 6 — deterministic Safe Recovery Planner and explicit one-step controlled continuation. Phase 7 audit/replay work has not begun.
+Phase 7 — tamper-evident stateless audit trail and read-only manual session replay. Phase 8 has not begun.

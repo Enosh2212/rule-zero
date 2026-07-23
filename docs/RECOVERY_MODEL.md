@@ -27,3 +27,7 @@ Removing an unnecessary subscription or warranty can preserve full controlled-ta
 ## Prohibited behavior and limitations
 
 Recovery cannot override `BLOCK`, increase budget, activate subscriptions/recurring payments, pay, submit orders, share data, navigate externally, mutate the Task Contract, auto-approve, auto-execute, or auto-advance the Worker. The current deterministic Shopping Trap planner emits one replacement step per failure class. It is stateless: it validates state versions and signed content but does not persist consumed plans globally. `RECOVERY_SIGNING_KEY` must replace the local fallback outside development.
+
+## Audit observation
+
+Phase 7 may record a completed recovery plan or recovery-step response. It verifies that the triggering action/evaluation or plan already appears in the audit chain. It cannot generate a plan, execute a step, resolve approval, or advance recovery.

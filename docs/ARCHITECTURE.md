@@ -128,3 +128,9 @@ The backend owns product IDs, category, integer-INR prices, stock, add-on IDs/pr
 Recovery is a fifth boundary after failure; it is neither a policy override nor an executor. `POST /api/recovery/plan` verifies the triggering action/evaluation/state, recomputes Phase 4, fingerprints the unchanged contract, selects canonical safe replacement actions, and signs the whole plan. `POST /api/recovery/execute-step` verifies that plan and extracts exactly one typed action. It delegates to Phase 5, which again invokes Phase 4 before any controlled effect.
 
 The frontend requires a click to generate a plan, another click for each step, and existing Phase 5 approval controls when a fresh decision is `ASK_APPROVAL`. It never auto-advances the Worker, a recovery step, or an approval. See `docs/RECOVERY_MODEL.md`.
+
+## Phase 7 — Audit and Replay
+
+Audit is a sixth observer-only boundary. It accepts completed typed outputs, validates their scenario/action/evaluation/approval/recovery/state relationships, creates a redacted digest, and appends one HMAC-linked event. It imports typed schemas but invokes none of the operational Phase 3–6 services.
+
+The stateless client carries the full session; the server verifies every event, sequence, previous hash, HMAC, relationship, and state transition before append. Replay is a frontend-only cursor over recorded events and cannot update live state or issue operational requests. See `docs/AUDIT_AND_REPLAY_MODEL.md`.

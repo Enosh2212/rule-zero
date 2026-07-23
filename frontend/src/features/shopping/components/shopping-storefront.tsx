@@ -11,6 +11,8 @@ import { RuleZeroInterceptorPanel } from "../../interceptor/components/rule-zero
 import type { ActionEvaluationResponse } from "../../interceptor/types";
 import type { ActionExecutionResponse, ControlledShoppingState } from "../../action-gate/types";
 import { SafeRecoveryPanel } from "../../recovery/components/safe-recovery-panel";
+import { AuditReplayPanel } from "../../audit/components/audit-replay-panel";
+import type { AuditArtifact, AuditArtifactType } from "../../audit/types";
 import { WorkerAgentPanel } from "../../worker/components/worker-agent-panel";
 import type { ProposedAgentAction } from "../../worker/types";
 
@@ -29,8 +31,13 @@ export function ShoppingStorefront() {
   const [latestEvaluation, setLatestEvaluation] = useState<ActionEvaluationResponse | null>(null);
   const [controlledState, setControlledState] = useState<ControlledShoppingState | null>(null);
   const [latestExecution, setLatestExecution] = useState<ActionExecutionResponse | null>(null);
+  const [latestAuditArtifact, setLatestAuditArtifact] = useState<AuditArtifact | null>(null);
   const totals = calculateCartTotals(shoppingTrapScenario, cart);
   const evaluationContext = latestProposal ? buildEvaluationContext(latestProposal, cart) : null;
+
+  function observe(artifact_type: AuditArtifactType, artifact: object, key: string) {
+    setLatestAuditArtifact({ artifact_type, artifact, artifact_key: `${artifact_type}:${key}` });
+  }
 
   return (
     <main className="min-h-screen bg-[#08090b] text-zinc-100">
@@ -49,13 +56,15 @@ export function ShoppingStorefront() {
 
         <TaskContractPanel onContractChange={setTaskContract} />
 
-        <div className="mt-8"><WorkerAgentPanel onProposalChange={setLatestProposal} /></div>
+        <div className="mt-8"><WorkerAgentPanel onProposalChange={(proposal) => { setLatestProposal(proposal); if (proposal) observe("worker_proposal", proposal, proposal.action_id); }} /></div>
 
-        <div className="mt-8"><RuleZeroInterceptorPanel proposedAction={latestProposal} contract={taskContract} context={evaluationContext} onEvaluationChange={setLatestEvaluation} /></div>
+        <div className="mt-8"><RuleZeroInterceptorPanel proposedAction={latestProposal} contract={taskContract} context={evaluationContext} onEvaluationChange={(evaluation) => { setLatestEvaluation(evaluation); observe("evaluation", evaluation, evaluation.evaluation_id); }} /></div>
 
-        <div className="mt-8"><SafeActionGatePanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} controlledState={controlledState} onStateChange={setControlledState} onExecutionChange={setLatestExecution} /></div>
+        <div className="mt-8"><SafeActionGatePanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} controlledState={controlledState} onStateChange={setControlledState} onExecutionChange={setLatestExecution} onAuditArtifact={(type, response) => observe(type, response, `${response.execution_id}:${response.status}`)} /></div>
 
-        <div className="mt-8"><SafeRecoveryPanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} executionResponse={latestExecution} controlledState={controlledState} onStateChange={setControlledState} /></div>
+        <div className="mt-8"><SafeRecoveryPanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} executionResponse={latestExecution} controlledState={controlledState} onStateChange={setControlledState} onPlanGenerated={(plan) => observe("recovery_plan", plan, plan.recovery_plan_id)} onRecoveryExecution={(response) => observe("recovery_execution_response", response, `${response.recovery_plan_id}:${response.executed_step_index}:${response.step_status}`)} onApprovalResponse={(response) => observe("approval_response", response, `${response.execution_id}:${response.status}`)} /></div>
+
+        <div className="mt-8"><AuditReplayPanel contract={taskContract} controlledState={controlledState} latestArtifact={latestAuditArtifact} /></div>
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-8"><ProductCatalogue products={shoppingTrapScenario.products} quantities={cart.quantities} dispatch={dispatch} /><EvidenceDrawer scenario={shoppingTrapScenario} /></div>

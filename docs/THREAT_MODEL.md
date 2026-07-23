@@ -38,6 +38,10 @@ Frontend state, prices, totals, evaluation output, and claimed eligibility are u
 
 Recovery plans and caller-selected steps are untrusted until their HMAC, scenario, contract fingerprint, triggering action/evaluation, state version, and ordered actions validate. The planner recomputes the trigger evaluation and never accepts a caller recovery decision. Step execution delegates to Phase 5; therefore recovery cannot directly mutate state or transform `BLOCK` into approval. Budget increases, subscriptions, recurring charges, payment retries, order submission, disclosure, and external navigation are absent from recovery actions.
 
+## Phase 7 audit threats
+
+The entire client-carried session and every submitted artifact are untrusted. Append first verifies the complete chain, validates the artifact through its existing typed model, checks references and state continuity, and derives event meaning server-side. Event HMACs bind content, order, state versions, references, and the previous hash. Deterministic redaction removes sensitive-key values, card/identity patterns, authorization tokens, and arbitrary HTML before storage or export. Replay has no operational API path.
+
 ## Non-goals for the MVP
 - Browsing arbitrary live websites
 - Completing real purchases or payments

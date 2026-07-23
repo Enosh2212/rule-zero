@@ -16,6 +16,7 @@ type Props = Readonly<{
   controlledState?: ControlledShoppingState | null;
   onStateChange?: (state: ControlledShoppingState) => void;
   onExecutionChange?: (response: ActionExecutionResponse) => void;
+  onAuditArtifact?: (artifactType: "execution_response" | "approval_response", response: ActionExecutionResponse) => void;
 }>;
 
 const statusStyle: Record<string, string> = {
@@ -23,7 +24,7 @@ const statusStyle: Record<string, string> = {
   rejected: "text-zinc-300", no_operation: "text-cyan-200",
 };
 
-export function SafeActionGatePanel({ proposedAction, contract, evaluation, controlledState, onStateChange, onExecutionChange }: Props) {
+export function SafeActionGatePanel({ proposedAction, contract, evaluation, controlledState, onStateChange, onExecutionChange, onAuditArtifact }: Props) {
   const [internalState, setInternalState] = useState<ControlledShoppingState | null>(null);
   const [result, setResult] = useState<ActionExecutionResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -66,6 +67,7 @@ export function SafeActionGatePanel({ proposedAction, contract, evaluation, cont
       setResult(response);
       publishState(response.after_state);
       onExecutionChange?.(response);
+      onAuditArtifact?.("execution_response", response);
     } catch { setError("The Safe Action Gate could not process this action."); }
     finally { setLoading(false); }
   }
@@ -81,6 +83,7 @@ export function SafeActionGatePanel({ proposedAction, contract, evaluation, cont
       setResult(response);
       publishState(response.after_state);
       onExecutionChange?.(response);
+      onAuditArtifact?.("approval_response", response);
     } catch { setError("The approval decision could not be recorded."); }
     finally { setLoading(false); }
   }

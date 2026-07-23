@@ -51,3 +51,7 @@ Phase 5 reuses this policy engine at execution time. `BLOCK` is terminal and can
 ## Phase 6 recovery enforcement
 
 Recovery actions use the same `ProposedAgentAction` schema and are evaluated by this unchanged precedence matrix. A recovery planner may omit, disable, review, refresh, or finish safely, but it cannot create authority. Each clicked step enters Phase 5, which performs a fresh Phase 4 evaluation. A resulting `BLOCK` remains refused; `ASK_APPROVAL` pauses for the existing exact-action approval flow.
+
+## Phase 7 observation
+
+Audit never evaluates policy. It records the already-returned typed evaluation, policy rule IDs, and decision after verifying action/scenario relationships. A caller-supplied contradictory decision is rejected. Replay displays the recorded decision without recomputing or executing it.
