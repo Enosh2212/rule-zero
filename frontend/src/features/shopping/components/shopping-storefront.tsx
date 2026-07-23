@@ -9,6 +9,8 @@ import { SafeActionGatePanel } from "../../action-gate/components/safe-action-ga
 import { buildEvaluationContext } from "../../interceptor/context";
 import { RuleZeroInterceptorPanel } from "../../interceptor/components/rule-zero-interceptor-panel";
 import type { ActionEvaluationResponse } from "../../interceptor/types";
+import type { ActionExecutionResponse, ControlledShoppingState } from "../../action-gate/types";
+import { SafeRecoveryPanel } from "../../recovery/components/safe-recovery-panel";
 import { WorkerAgentPanel } from "../../worker/components/worker-agent-panel";
 import type { ProposedAgentAction } from "../../worker/types";
 
@@ -25,6 +27,8 @@ export function ShoppingStorefront() {
   const [taskContract, setTaskContract] = useState<TaskContract | null>(null);
   const [latestProposal, setLatestProposal] = useState<ProposedAgentAction | null>(null);
   const [latestEvaluation, setLatestEvaluation] = useState<ActionEvaluationResponse | null>(null);
+  const [controlledState, setControlledState] = useState<ControlledShoppingState | null>(null);
+  const [latestExecution, setLatestExecution] = useState<ActionExecutionResponse | null>(null);
   const totals = calculateCartTotals(shoppingTrapScenario, cart);
   const evaluationContext = latestProposal ? buildEvaluationContext(latestProposal, cart) : null;
 
@@ -49,7 +53,9 @@ export function ShoppingStorefront() {
 
         <div className="mt-8"><RuleZeroInterceptorPanel proposedAction={latestProposal} contract={taskContract} context={evaluationContext} onEvaluationChange={setLatestEvaluation} /></div>
 
-        <div className="mt-8"><SafeActionGatePanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} /></div>
+        <div className="mt-8"><SafeActionGatePanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} controlledState={controlledState} onStateChange={setControlledState} onExecutionChange={setLatestExecution} /></div>
+
+        <div className="mt-8"><SafeRecoveryPanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} executionResponse={latestExecution} controlledState={controlledState} onStateChange={setControlledState} /></div>
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-8"><ProductCatalogue products={shoppingTrapScenario.products} quantities={cart.quantities} dispatch={dispatch} /><EvidenceDrawer scenario={shoppingTrapScenario} /></div>

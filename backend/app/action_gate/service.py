@@ -82,10 +82,11 @@ def _context(request: ActionExecutionRequest | ApprovalDecisionRequest) -> Evalu
                 projected = current + immediate
             category = product.category
     elif action.action_type == AgentActionType.TOGGLE_ADDON and action.target.id == WARRANTY_ID:
-        optional = True
-        immediate = WARRANTY_PRICE
+        selected = action.payload.get("selected") is True
+        optional = selected
+        immediate = WARRANTY_PRICE if selected else 0
         merchandise = sum(line.unit_price * line.quantity for line in state.cart_items)
-        projected = merchandise + (WARRANTY_PRICE if action.payload.get("selected") is True else 0)
+        projected = merchandise + (WARRANTY_PRICE if selected else 0)
     elif action.action_type == AgentActionType.ACTIVATE_SUBSCRIPTION and action.target.id == MEMBERSHIP_ID:
         recurring = MEMBERSHIP_MONTHLY_PRICE
     elif action.action_type in {AgentActionType.MAKE_PAYMENT, AgentActionType.SUBMIT_ORDER}:

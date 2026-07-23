@@ -279,3 +279,39 @@ Apply eligible Shopping Trap actions through one backend-owned boundary after fr
 ### Result
 - Completed.
 - Remaining risk: without persistence, the stateless MVP cannot globally detect replay of an entire old request/state pair. Normal reuse against returned newer state is invalidated. The fallback signing key is development-only.
+
+## Phase 6 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 6 — Safe Recovery Planner
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Produce deterministic, contract-preserving safe alternatives after verified failure and execute only one explicitly selected replacement through the existing Phase 4 and Phase 5 boundaries.
+
+### Codex work
+- Added typed recovery triggers, reasons, strategies, step statuses, completion states, plans, requests/responses, and traces.
+- Added deterministic recovery planning for subscriptions, recurring charges, warranty budget failures, payment/order/data boundaries, external navigation, rejected approvals, and stale state.
+- Added HMAC plan integrity across scenario, contract fingerprint, trigger/evaluation binding, state version, ordered actions, expected state, trace, and warnings.
+- Added plan and execute-one-step endpoints; recovery execution delegates to Phase 5 and never mutates state directly.
+- Added a Safe Recovery panel with explicit generate/execute/approve/reject/skip/reset controls, timeline, constraints, outcomes, trace, and raw JSON.
+- Lifted only canonical Phase 5 response state into the storefront so Gate and Recovery panels share backend-returned state; Phase 1 cart dispatch remains isolated.
+- Added backend integrity/policy/execution tests and frontend manual-flow/isolation tests.
+
+### Security decisions
+- Trigger evaluations are recomputed canonically; caller recovery classifications are not accepted.
+- The original Task Contract is fingerprinted and never modified or widened.
+- Changed plan steps, contracts, or state versions are rejected before Phase 5.
+- `BLOCK` remains terminal. No automatic recovery, approval, next-step execution, Worker advancement, payment retry, external side effect, LLM, browser automation, authentication, database, or persistence was added.
+
+### Verification
+- `npm run test`: 8 files, 49 tests passed.
+- `npm run lint`: passed without warnings.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend pytest: 81 tests passed with one existing Starlette TestClient deprecation warning.
+- `git diff --check`: passed; complete Phase 6 forbidden-functionality audit recorded in the task handoff.
+
+### Result
+- Completed.
+- Remaining risk: stateless operation cannot globally record plan consumption; signed content and exact state versions prevent ordinary tampering/reuse against newer state. The deterministic planner currently emits one replacement step per Shopping Trap failure class.

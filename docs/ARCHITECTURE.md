@@ -122,3 +122,9 @@ See `docs/POLICY_RULES.md` for the complete rule matrix and precedence.
 Phase 5 preserves four boundaries: Worker proposal, Rule Zero evaluation, explicit human approval when required, and canonical controlled execution. The execution API never accepts a client decision; it validates submitted state, rebuilds context from backend-owned products/add-ons, and invokes Phase 4 immediately before execution. Approval decisions repeat those checks.
 
 The backend owns product IDs, category, integer-INR prices, stock, add-on IDs/prices, supported actions, and the controlled state schema. State is client-carried but wholly validated. Successful mutations increment `state_version`; read-only actions return `no_operation`; refusals return unchanged state. See `docs/ACTION_EXECUTION_MODEL.md`.
+
+## Phase 6 — Safe Recovery Planner
+
+Recovery is a fifth boundary after failure; it is neither a policy override nor an executor. `POST /api/recovery/plan` verifies the triggering action/evaluation/state, recomputes Phase 4, fingerprints the unchanged contract, selects canonical safe replacement actions, and signs the whole plan. `POST /api/recovery/execute-step` verifies that plan and extracts exactly one typed action. It delegates to Phase 5, which again invokes Phase 4 before any controlled effect.
+
+The frontend requires a click to generate a plan, another click for each step, and existing Phase 5 approval controls when a fresh decision is `ASK_APPROVAL`. It never auto-advances the Worker, a recovery step, or an approval. See `docs/RECOVERY_MODEL.md`.

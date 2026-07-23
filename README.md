@@ -99,10 +99,19 @@ POST http://localhost:8000/api/approvals/decide
 
 Phase 5 adds manual, server-revalidated execution for controlled local Shopping Trap state. `ALLOW` requires an explicit click, `BLOCK` is refused, and `ASK_APPROVAL` requires an exact action/contract/state-bound decision. Payment, order submission, data disclosure, and real navigation never execute. Autonomous recovery remains reserved for Phase 6.
 
+## Phase 6 Safe Recovery APIs
+
+```text
+POST http://localhost:8000/api/recovery/plan
+POST http://localhost:8000/api/recovery/execute-step
+```
+
+The deterministic recovery planner classifies a verified failure, preserves the original Task Contract, and returns an HMAC-bound ordered plan. Each replacement action still requires an explicit click and passes through the existing Rule Zero Interceptor and Safe Action Gate. Recovery never retries payment, overrides `BLOCK`, raises the budget, or auto-approves an action.
+
 ## Product principle
 
 No consequential action should execute only because a model requested it. Rule Zero combines deterministic policy checks, semantic threat analysis, human approval boundaries, and evidence-first auditing.
 
 ## Status
 
-Phase 5 — Safe Action Gate. Controlled local execution and exact-action approval handling are implemented; autonomous recovery remains reserved for Phase 6.
+Phase 6 — deterministic Safe Recovery Planner and explicit one-step controlled continuation. Phase 7 audit/replay work has not begun.

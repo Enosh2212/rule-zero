@@ -55,14 +55,16 @@
 
 **Phase 5 implementation note:** the delivered scope is the Safe Action Gate: canonical server revalidation, controlled local execution, exact-action approval/rejection, and terminal `BLOCK` enforcement. Autonomous recovery and safe-alternative generation remain Phase 6 work.
 
-## Phase 6 — Mission Control UI
-- Task input and scenario selector
-- Visible user contract
-- Live browser/simulation panel
-- Proposed action, consequence, policy conflict, and decision cards
-- Action timeline and session state
+## Phase 6 — Safe Recovery Planner
+- Deterministically classify blocked, rejected, stale, and unsupported outcomes
+- Preserve the original Task Contract and canonical Shopping Trap data
+- Propose HMAC-bound safe replacement actions
+- Execute one explicitly selected recovery step through Phases 4 and 5
+- Pause for existing approval controls without automatic continuation
 
-**Exit gate:** a judge understands the intervention without narration.
+**Exit gate:** each failed action has a safe full/partial outcome without bypassing Rule Zero.
+
+**Status:** implemented. Audit/replay and broader Mission Control orchestration remain future phases.
 
 ## Phase 7 — Audit, Replay, and Evidence
 - Immutable event schema

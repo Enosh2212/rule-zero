@@ -47,3 +47,7 @@ The frontend derives these fields from the controlled Phase 1 fixture and cart s
 # Phase 5 execution enforcement
 
 Phase 5 reuses this policy engine at execution time. `BLOCK` is terminal and cannot be overridden. `ASK_APPROVAL` creates a signed, content-bound request and pauses without mutation. Even after approval, payment, order submission, sensitive-data entry, and external navigation are hard-refused. Canonical backend prices and state—not request payload price claims—supply execution consequences.
+
+## Phase 6 recovery enforcement
+
+Recovery actions use the same `ProposedAgentAction` schema and are evaluated by this unchanged precedence matrix. A recovery planner may omit, disable, review, refresh, or finish safely, but it cannot create authority. Each clicked step enters Phase 5, which performs a fresh Phase 4 evaluation. A resulting `BLOCK` remains refused; `ASK_APPROVAL` pauses for the existing exact-action approval flow.

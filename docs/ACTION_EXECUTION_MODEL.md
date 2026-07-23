@@ -20,4 +20,8 @@ An approval request ID is an HMAC over scenario, full action, Task Contract fing
 
 ## Known limitations
 
-The MVP is stateless. It invalidates replay against the returned newer state, but without persistence cannot globally detect a caller replaying an entire old request/state pair. The fallback signing key is local-demo-only; deployment must set `APPROVAL_SIGNING_KEY`. There is no authentication, database, real browser, payment, commerce integration, autonomous recovery, or audit persistence.
+The MVP is stateless. It invalidates replay against the returned newer state, but without persistence cannot globally detect a caller replaying an entire old request/state pair. The fallback signing key is local-demo-only; deployment must set `APPROVAL_SIGNING_KEY`. There is no authentication, database, real browser, payment, commerce integration, or audit persistence.
+
+## Recovery interaction
+
+Phase 6 never calls the canonical mutation function directly. A verified recovery step is converted into the ordinary `ActionExecutionRequest` and sent through this same boundary. If it asks for approval, the existing action/state/contract-bound approval endpoint is used. Later recovery steps are not executed automatically.

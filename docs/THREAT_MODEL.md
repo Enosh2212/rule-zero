@@ -34,6 +34,10 @@ Phase 4 treats provenance as supporting evidence, never standalone authorization
 
 Frontend state, prices, totals, evaluation output, and claimed eligibility are untrusted. The backend reconstructs consequences from canonical fixtures and re-evaluates before every controlled mutation. Approval IDs are HMAC-bound to scenario, exact action, contract fingerprint, state version, and canonical consequence context. Changed bindings are refused, and approval never overrides `BLOCK`. Real payment, order submission, sensitive-data disclosure, and external navigation remain hard execution boundaries.
 
+## Phase 6 recovery threats
+
+Recovery plans and caller-selected steps are untrusted until their HMAC, scenario, contract fingerprint, triggering action/evaluation, state version, and ordered actions validate. The planner recomputes the trigger evaluation and never accepts a caller recovery decision. Step execution delegates to Phase 5; therefore recovery cannot directly mutate state or transform `BLOCK` into approval. Budget increases, subscriptions, recurring charges, payment retries, order submission, disclosure, and external navigation are absent from recovery actions.
+
 ## Non-goals for the MVP
 - Browsing arbitrary live websites
 - Completing real purchases or payments

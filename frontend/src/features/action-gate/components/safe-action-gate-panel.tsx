@@ -13,6 +13,9 @@ type Props = Readonly<{
   proposedAction: ProposedAgentAction | null;
   contract: TaskContract | null;
   evaluation: ActionEvaluationResponse | null;
+  controlledState?: ControlledShoppingState | null;
+  onStateChange?: (state: ControlledShoppingState) => void;
+  onExecutionChange?: (response: ActionExecutionResponse) => void;
 }>;
 
 const statusStyle: Record<string, string> = {
@@ -20,15 +23,21 @@ const statusStyle: Record<string, string> = {
   rejected: "text-zinc-300", no_operation: "text-cyan-200",
 };
 
-export function SafeActionGatePanel({ proposedAction, contract, evaluation }: Props) {
-  const [state, setState] = useState<ControlledShoppingState | null>(null);
+export function SafeActionGatePanel({ proposedAction, contract, evaluation, controlledState, onStateChange, onExecutionChange }: Props) {
+  const [internalState, setInternalState] = useState<ControlledShoppingState | null>(null);
   const [result, setResult] = useState<ActionExecutionResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const state = controlledState ?? internalState;
+
+  function publishState(nextState: ControlledShoppingState) {
+    setInternalState(nextState);
+    onStateChange?.(nextState);
+  }
 
   async function resetState() {
     setLoading(true); setError(null); setResult(null);
-    try { setState((await loadShoppingState()).state); }
+    try { publishState((await loadShoppingState()).state); }
     catch { setError("Unable to load the controlled Shopping Trap state."); }
     finally { setLoading(false); }
   }
@@ -36,10 +45,15 @@ export function SafeActionGatePanel({ proposedAction, contract, evaluation }: Pr
   useEffect(() => {
     let active = true;
     loadShoppingState()
-      .then((snapshot) => { if (active) setState(snapshot.state); })
+      .then((snapshot) => {
+        if (active) {
+          setInternalState(snapshot.state);
+          onStateChange?.(snapshot.state);
+        }
+      })
       .catch(() => { if (active) setError("Unable to load the controlled Shopping Trap state."); });
     return () => { active = false; };
-  }, []);
+  }, [onStateChange]);
 
   async function submitAction() {
     if (!state || !proposedAction || !contract) return;
@@ -50,7 +64,8 @@ export function SafeActionGatePanel({ proposedAction, contract, evaluation }: Pr
         current_state: state, expected_state_version: state.state_version, approval: null,
       });
       setResult(response);
-      setState(response.after_state);
+      publishState(response.after_state);
+      onExecutionChange?.(response);
     } catch { setError("The Safe Action Gate could not process this action."); }
     finally { setLoading(false); }
   }
@@ -64,7 +79,8 @@ export function SafeActionGatePanel({ proposedAction, contract, evaluation }: Pr
         current_state: state, approval_request_id: result.approval_request.approval_request_id, decision,
       });
       setResult(response);
-      setState(response.after_state);
+      publishState(response.after_state);
+      onExecutionChange?.(response);
     } catch { setError("The approval decision could not be recorded."); }
     finally { setLoading(false); }
   }
