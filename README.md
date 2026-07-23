@@ -136,12 +136,29 @@ Exact deployment and rollback fields are in [docs/DEPLOYMENT_GUIDE.md](docs/DEPL
 
 ## Screenshots
 
-Screenshots are intentionally left as release-pack placeholders until the submission owner captures the final live build:
+### Landing page
 
-- `[PLACEHOLDER: landing page — desktop]`
-- `[PLACEHOLDER: ₹199/month membership BLOCK decision]`
-- `[PLACEHOLDER: safe outcome and Security Proof]`
-- `[PLACEHOLDER: Advanced Security Lab — mobile]`
+![Rule Zero landing page](docs/screenshot/01-landing.png)
+
+The landing page introduces the controlled demo and provides the evaluator path into Rule Zero.
+
+### Unauthorized membership blocked
+
+![Unauthorized membership blocked](docs/screenshot/02-membership-blocked.png)
+
+Rule Zero blocks the untrusted ₹199/month recurring membership because the Task Contract does not authorize subscriptions.
+
+### Payment boundary blocked
+
+![Payment boundary blocked](docs/screenshot/03-payment-blocked.png)
+
+The payment boundary fails closed and exposes only the safe option to stop before payment.
+
+### Verified safe outcome
+
+![Verified safe outcome](docs/screenshot/04-safe-outcome.png)
+
+The final state verifies that the allowed product remains within budget while no recurring charge, payment, order, or data sharing occurred.
 
 ## Limitations and non-claims
 

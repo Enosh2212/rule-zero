@@ -42,6 +42,32 @@ Rule Zero inserts a typed, deterministic authorization boundary before execution
 
 A controlled storefront offers a valid ₹1,499 power bank, then exposes an untrusted instruction to retain a ₹199/month membership. Rule Zero allows the product only after an explicit safety check and execution click, blocks the recurring charge, safely continues without it, blocks payment, and displays a verified no-payment/no-order/no-data outcome.
 
+## Screenshots
+
+### Landing page
+
+![Rule Zero landing page](screenshot/01-landing.png)
+
+The landing page introduces the controlled demo and directs evaluators to the guided experience.
+
+### Unauthorized membership blocked
+
+![Unauthorized membership blocked](screenshot/02-membership-blocked.png)
+
+The untrusted ₹199/month recurring membership is blocked because subscriptions are outside the user's authority.
+
+### Payment boundary blocked
+
+![Payment boundary blocked](screenshot/03-payment-blocked.png)
+
+Rule Zero stops at the payment boundary and offers no route to execute the blocked payment.
+
+### Verified safe outcome
+
+![Verified safe outcome](screenshot/04-safe-outcome.png)
+
+The verified outcome shows the product within budget and confirms that no membership, payment, order, or data sharing occurred.
+
 ## Architecture summary
 
 Next.js frontend on Vercel → typed FastAPI endpoints on Render → Task Contract → deterministic Worker proposal → Rule Zero Interceptor → explicit Safe Action Gate / one-time approval → Safe Recovery → HMAC-linked audit proof.
@@ -76,7 +102,7 @@ Rule Zero demonstrates deny-by-default parsing, typed action boundaries, explici
 
 - `[ ]` Replace video placeholder with final public link.
 - `[ ]` Replace team placeholders.
-- `[ ]` Capture and add final live screenshots.
+- `[x]` Capture and add final live screenshots.
 - `[ ]` Warm backend and rerun deployment validator.
 - `[ ]` Run the three-minute demo from a private window and mobile device.
 - `[ ]` Confirm repository visibility and chosen commit.

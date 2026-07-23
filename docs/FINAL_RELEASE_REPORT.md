@@ -71,6 +71,10 @@ Result: exit code `0`; all checks passed.
 
 The browser session was clean and unauthenticated, confirming that no credentials are required for the three public routes. A dedicated private-window manual check remains in the operator checklist because browser privacy-mode state is not programmatically attested by this run.
 
+## Final screenshots
+
+Final live screenshots were captured for the landing page, unauthorized membership block, payment boundary block, and verified safe outcome. They are stored in `docs/screenshot/` and presented in the README and submission copy. A separate read-only Security Proof screenshot was not included in the final capture set.
+
 ## Local verification
 
 | Command | Result |
