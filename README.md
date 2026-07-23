@@ -1,164 +1,166 @@
 # Rule Zero
 
-**A pre-action security layer for autonomous AI agents.**
+> **A permission firewall for AI agents.**
 
-Rule Zero evaluates an AI agent's proposed browser actions before execution. It allows safe actions, blocks policy violations, requests human approval for consequential actions, and records an evidence-backed audit trail.
+Rule Zero is a controlled hackathon demo of a pre-action authorization layer for AI agents. A Worker can propose an action, but a separate deterministic policy boundary decides whether that action is allowed, blocked, or requires one-time human approval before the controlled action gate can run it.
 
-## Hackathon MVP
+> **Controlled-demo disclaimer:** Rule Zero does not browse arbitrary websites or perform real purchases, payments, orders, navigation, or personal-data submission. It is not production security software.
 
-The MVP uses controlled web environments to demonstrate realistic agent risks without browsing arbitrary malicious websites.
+## Try the live demo
 
-1. **Shopping Trap** — hidden subscription, pre-selected warranty, budget violation, and prompt injection.
-2. **Scholarship Form** — excessive personal-data request, unapproved submission, and suspicious redirect.
-3. **Travel Booking** — price drift, pre-selected insurance, upgrade pressure, and payment boundary.
+| Resource | Link |
+| --- | --- |
+| Guided Demo | [rule-zero-flax.vercel.app/demo](https://rule-zero-flax.vercel.app/demo) |
+| Advanced Security Lab | [rule-zero-flax.vercel.app/demo/shopping](https://rule-zero-flax.vercel.app/demo/shopping) |
+| Landing page | [rule-zero-flax.vercel.app](https://rule-zero-flax.vercel.app) |
+| Backend health | [rule-zero.onrender.com/health](https://rule-zero.onrender.com/health) |
+| Source | [github.com/Enosh2212/rule-zero](https://github.com/Enosh2212/rule-zero) |
 
-## Core workflow
+The evaluator-facing Guided Demo is the fastest path. It uses a safe-looking controlled store to make the risk concrete: the user asks for a power bank under ₹1,500, forbids subscriptions and personal-data sharing, and says to stop before payment. The store exposes an untrusted ₹199/month membership instruction. Rule Zero allows the ₹1,499 product, blocks the recurring membership, blocks payment, and produces a verifiable security proof.
 
-```text
-User instruction
-  -> Task Contract
-  -> Worker proposes action
-  -> Action Interceptor
-  -> Policy + Threat Evaluation
-  -> ALLOW / BLOCK / ASK
-  -> Safe Recovery
-  -> Audit Report
+The shopping UI is a demonstration scenario, not the product itself. The product idea is the permission firewall between an agent's proposal and any consequential tool or system.
+
+## How it works
+
+1. Natural-language intent becomes a typed, deny-by-default Task Contract.
+2. A deterministic Worker simulator emits one typed proposal; it cannot execute it.
+3. Rule Zero compares the proposal with the contract, canonical scenario state, provenance, and consequence.
+4. The Interceptor returns `ALLOW`, `BLOCK`, or `ASK_APPROVAL`.
+5. Only an explicit UI action can invoke the Safe Action Gate. `BLOCK` has no override path.
+6. Recovery proposes safer typed steps without weakening the original contract.
+7. A stateless HMAC-linked audit chain records typed results; replay is read-only.
+
+```mermaid
+flowchart LR
+    U["User instruction"] --> C["Task Contract"]
+    W["Worker proposal"] --> R["Rule Zero Interceptor"]
+    C --> R
+    S["Canonical controlled state"] --> R
+    R --> D{"ALLOW / BLOCK / ASK_APPROVAL"}
+    D -->|ALLOW + explicit click| G["Safe Action Gate"]
+    D -->|ASK + explicit approval| G
+    D -->|BLOCK| X["No execution path"]
+    G --> S
+    D --> V["Safe Recovery"]
+    C --> V
+    C --> A["Tamper-evident audit"]
+    W --> A
+    R --> A
+    G --> A
+    V --> A
+    A --> P["Read-only proof / replay"]
 ```
 
-## Repository structure
+## Security properties demonstrated
 
-```text
-frontend/   Next.js mission-control and live-demo interface
-backend/    FastAPI contracts, policy engine, orchestration, and audit API
-docs/       Architecture, threat model, roadmap, testing, and Codex evidence
-prompts/    Phase-scoped Codex prompts
+- Proposal is separate from execution.
+- Typed action boundaries constrain every controlled cart mutation.
+- Missing or ambiguous authority fails closed for payment, order submission, subscriptions, and sensitive-data sharing.
+- Untrusted webpage text is evidence, never authority.
+- Canonical backend prices and state are used at execution time.
+- Consequential actions require a distinct explicit control.
+- Approval is one-time and bound to the exact action, contract, and state.
+- A blocked action exposes no execute, approve, or override control.
+- Recovery preserves the original Task Contract and cannot retry forbidden payment.
+- Audit failures remain separate from operation results; replay invokes no operational endpoint.
+- Production configuration rejects weak or placeholder signing keys and wildcard/localhost CORS.
+
+## Verification evidence
+
+The repository includes deterministic unit, integration, adversarial, configuration, and test-only Chromium coverage. The latest Phase 11 verification results are recorded in [docs/FINAL_RELEASE_REPORT.md](docs/FINAL_RELEASE_REPORT.md) and [docs/CODEX_BUILD_LOG.md](docs/CODEX_BUILD_LOG.md).
+
+The live deployment validator checks backend health and typed endpoints, all three public frontend routes, exact-origin CORS, unrelated-origin rejection, and common secret-disclosure markers:
+
+```powershell
+python scripts/verify_deployment.py `
+  --frontend-url https://rule-zero-flax.vercel.app `
+  --backend-url https://rule-zero.onrender.com
 ```
+
+## Built with Codex
+
+Codex was used as an implementation and evaluation partner across phase-scoped prompts: repository inspection, typed API/UI implementation, regression tests, adversarial test design, diff review, deployment preparation, and release evidence. Human review retained phase boundaries, deployment authority, and the final hackathon claims. Reusable phase prompts are kept in `prompts/`, and evidence is kept in `docs/CODEX_BUILD_LOG.md`.
 
 ## Local setup
 
-### Frontend
+Prerequisites: Node.js 22+, Python 3.13, and npm.
 
-```powershell
-cd frontend
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-- `/` — project landing page
-- `/demo` — evaluator-focused nine-stage Guided Demo
-- `/demo/shopping` — detailed Phase 1–7 Security Lab
-
-### Backend
+Backend:
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+Copy-Item .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-Health check: `http://localhost:8000/health`
-
-Task Contract API:
-
-```text
-POST http://localhost:8000/api/contracts/parse
-```
-
-Worker proposal API:
-
-```text
-POST http://localhost:8000/api/worker/propose
-```
-
-Rule Zero evaluation API:
-
-```text
-POST http://localhost:8000/api/interceptor/evaluate
-```
-
-The Phase 4 interceptor returns deterministic `ALLOW`, `BLOCK`, or `ASK_APPROVAL` decisions with rule findings, contract conflicts, consequence assessment, and trace. `execution_occurred` is always false.
-
-The Phase 3 worker is a deterministic, stateless simulator. It emits typed proposals only; it cannot change the cart, cross checkout, submit an order, or make a payment.
-
-The frontend uses `NEXT_PUBLIC_API_URL` and safely defaults to `http://localhost:8000` for local development. Copy `frontend/.env.example` to `frontend/.env.local` only when you need to override that URL.
-
-### Tests
-
-```powershell
-cd backend
-pytest
-```
-
-## Phase 5 Safe Action Gate APIs
-
-```text
-GET  http://localhost:8000/api/scenarios/shopping-trap/state
-POST http://localhost:8000/api/actions/execute
-POST http://localhost:8000/api/approvals/decide
-```
-
-Phase 5 adds manual, server-revalidated execution for controlled local Shopping Trap state. `ALLOW` requires an explicit click, `BLOCK` is refused, and `ASK_APPROVAL` requires an exact action/contract/state-bound decision. Payment, order submission, data disclosure, and real navigation never execute. Autonomous recovery remains reserved for Phase 6.
-
-## Phase 6 Safe Recovery APIs
-
-```text
-POST http://localhost:8000/api/recovery/plan
-POST http://localhost:8000/api/recovery/execute-step
-```
-
-The deterministic recovery planner classifies a verified failure, preserves the original Task Contract, and returns an HMAC-bound ordered plan. Each replacement action still requires an explicit click and passes through the existing Rule Zero Interceptor and Safe Action Gate. Recovery never retries payment, overrides `BLOCK`, raises the budget, or auto-approves an action.
-
-## Phase 7 Audit APIs
-
-```text
-POST http://localhost:8000/api/audit/start
-POST http://localhost:8000/api/audit/append
-POST http://localhost:8000/api/audit/verify
-POST http://localhost:8000/api/audit/export
-```
-
-Phase 7 records completed Phase 3–6 artifacts into a stateless HMAC-linked event chain. The backend validates artifact relationships and state continuity, redacts sensitive material, verifies tampering, and exports JSON or Markdown. Manual replay reads recorded events only and never invokes Worker, Interceptor, approval, execution, or recovery operations.
-
-## Product principle
-
-No consequential action should execute only because a model requested it. Rule Zero combines deterministic policy checks, semantic threat analysis, human approval boundaries, and evidence-first auditing.
-
-## Guided Demo
-
-The Phase 8 Guided Demo coordinates the existing Phase 2–7 typed APIs into one deterministic Shopping Trap walkthrough. Every operational transition remains an explicit user click. The frontend does not make policy decisions, auto-execute allowed actions, auto-approve requests, override blocks, or auto-run recovery.
-
-Rule Zero evaluates consequential agent actions before execution.
-
-## Status
-
-Phase 10A — deployment preparation for the controlled hackathon demo. Phase 9 evaluation evidence remains current; platform configuration, fail-closed production settings, and validation guidance are ready, but nothing has been deployed.
-
-See `docs/EVALUATION_MATRIX.md` for results, thresholds, and residual limitations.
-
-Release evidence is recorded in `docs/SECURITY_EVAL_REPORT.md` and `docs/RELEASE_READINESS_CHECKLIST.md`. The current verdict is conditional for the controlled hackathon demo and explicitly not a production deployment approval.
-
-Browser tests are test-only:
+Frontend:
 
 ```powershell
 cd frontend
-npx playwright install chromium
-npm run test:e2e
+npm install
+Copy-Item .env.example .env.local
+npm run dev
 ```
 
-The Playwright harness uses isolated localhost ports and never becomes a Worker or runtime browser capability.
+Open `http://localhost:3000`, `/demo`, or `/demo/shopping`. The frontend uses the centralized API client and `NEXT_PUBLIC_API_URL`, with `http://localhost:8000` as the development default.
 
-## Phase 10A deployment preparation
-
-The controlled demo is prepared for a standard Vercel Next.js frontend and Render Python 3.13 backend. Production startup fails closed for missing or weak signing keys and missing, localhost, or wildcard CORS configuration. Nothing has been deployed, and Phase 11 has not begun.
-
-Exact platform fields, environment ordering, safe key generation, validation, and paired rollback are documented in `docs/DEPLOYMENT_GUIDE.md` and `docs/DEPLOYMENT_VALIDATION.md`.
-
-After an authorized deployment, run:
+Run the full local checks:
 
 ```powershell
-python scripts/verify_deployment.py --frontend-url https://<vercel-host> --backend-url https://<render-host>
+cd frontend
+npm run test
+npm run lint
+npm run build
+npm run test:e2e
+
+cd ..\backend
+pytest
+
+cd ..
+python scripts/check_secrets.py
+git diff --check
 ```
+
+Playwright is test-only and is not a runtime Worker or browser capability.
+
+## Deployment architecture
+
+- Frontend: Vercel, root `frontend`, standard Next.js build, `NEXT_PUBLIC_API_URL=https://rule-zero.onrender.com`.
+- Backend: Render Web Service, root `backend`, Python 3.13, Uvicorn, health path `/health`.
+- Backend-only production variables: `ENVIRONMENT`, `CORS_ORIGINS`, `APPROVAL_SIGNING_KEY`, `RECOVERY_SIGNING_KEY`, and `AUDIT_SIGNING_KEY`.
+
+Exact deployment and rollback fields are in [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md). No signing key uses the `NEXT_PUBLIC_` prefix or belongs in frontend code.
+
+## Screenshots
+
+Screenshots are intentionally left as release-pack placeholders until the submission owner captures the final live build:
+
+- `[PLACEHOLDER: landing page — desktop]`
+- `[PLACEHOLDER: ₹199/month membership BLOCK decision]`
+- `[PLACEHOLDER: safe outcome and Security Proof]`
+- `[PLACEHOLDER: Advanced Security Lab — mobile]`
+
+## Limitations and non-claims
+
+- This is a deterministic, controlled hackathon demo—not a general-purpose autonomous agent, browser sandbox, or production authorization service.
+- The Worker and storefront are simulators. There is no real commerce integration, payment processor, authentication, database, or persistent server-side session.
+- The policy vocabulary, price parsing, product catalogue, and recovery actions are intentionally bounded.
+- Provenance is structured test evidence; it is not cryptographic web-origin attestation.
+- Audit chains are stateless and supplied by the client for verification; completeness across a malicious or interrupted client is not guaranteed.
+- Render cold starts can delay the first request.
+- The current frontend dependency audit has known Next.js/sharp high-severity aggregate findings and a moderate PostCSS finding; see the release report. No unsupported claim of production readiness is made.
+
+## Repository map
+
+```text
+frontend/   Next.js evaluator UI and test-only browser suite
+backend/    FastAPI typed contracts, policy, controlled execution, recovery, audit
+docs/       Architecture, threats, evaluations, deployment, and release evidence
+prompts/    Phase-scoped Codex prompts
+scripts/    Secret and live-deployment validation tools
+```
+
+Start with [docs/FINAL_RELEASE_REPORT.md](docs/FINAL_RELEASE_REPORT.md) for the release verdict, [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the presentation, and [docs/SUBMISSION_COPY.md](docs/SUBMISSION_COPY.md) for copy-ready hackathon text.

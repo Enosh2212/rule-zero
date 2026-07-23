@@ -509,3 +509,41 @@ Attempt to break the existing Phase 2–8 safety boundaries with deterministic h
 - Frontend production build: passed; `/`, `/demo`, and `/demo/shopping` generated.
 - Chromium Playwright: 9 passed across desktop, tablet, mobile, accessibility, security-flow, and backend-error cases.
 - Backend pytest: 134 passed with one existing Starlette TestClient deprecation warning.
+
+## Phase 11 — live release validation and hackathon submission pack
+
+### Date and scope
+
+- Date: 2026-07-23
+- Scope: validation and evaluator documentation only.
+- Deployment action: none. No tag, release, publication, submission, or runtime behavior change.
+
+### Live evidence
+
+- `scripts/verify_deployment.py` passed backend health, Task Contract, Worker proposal, Rule Zero evaluation, all three frontend routes, exact-origin CORS, unrelated-origin rejection, and common secret-disclosure checks.
+- The complete deployed Guided Demo was exercised from an unauthenticated browser session.
+- The ₹1,499 product remained unexecuted after `ALLOW` until `Add Product Safely` was clicked.
+- The untrusted ₹199/month membership was `BLOCKED`; no override or blocked-execution control existed.
+- Payment was `BLOCKED`; no payment approval or execution control existed.
+- The final receipt reported no recurring charge, payment, order, or personal-data sharing.
+- Security Proof displayed the contract, recovery, policy findings, verified audit, and read-only timeline.
+- The Security Lab loaded at 390×844 without horizontal overflow; no site console warning/error was captured during the final check.
+
+### Release artifacts
+
+- Rewrote `README.md` as an evaluator-facing project page with live links, architecture, security properties, setup, deployment, limitations, Codex usage, and screenshot placeholders.
+- Added `docs/FINAL_RELEASE_REPORT.md`, `docs/DEMO_SCRIPT.md`, and `docs/SUBMISSION_COPY.md`.
+- Classified the release honestly as GO for a controlled hackathon demonstration and NO-GO for production use.
+
+### Final verification
+
+- Live deployment validator: all 14 reported checks passed with exit code 0.
+- Frontend Vitest: 14 files / 68 tests passed.
+- Frontend ESLint: passed.
+- Frontend production build with `NEXT_PUBLIC_API_URL=https://rule-zero.onrender.com`: passed; `/`, `/demo`, and `/demo/shopping` generated.
+- Chromium Playwright: 9 tests passed; automation remained test-only.
+- Backend pytest: 134 tests passed with one existing Starlette TestClient deprecation warning.
+- Targeted adversarial/configuration pytest: 38 tests passed with the same warning.
+- Lightweight repository secret scan: passed.
+- Submission description counts: exactly 50 words and 150 words.
+- `git diff --check`: passed; Git emitted only working-tree line-ending conversion notices.
