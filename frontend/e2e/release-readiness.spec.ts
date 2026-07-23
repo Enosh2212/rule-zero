@@ -39,7 +39,7 @@ for (const viewport of [
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     expect(overflow).toBe(false);
     const startBox = await page.getByRole("button", { name: "Start Guided Demo" }).boundingBox();
-    const resetBox = await page.getByRole("button", { name: "Reset Guided Demo" }).boundingBox();
+    const resetBox = await page.getByRole("button", { name: "Reset Demo" }).boundingBox();
     expect(startBox).not.toBeNull();
     expect(resetBox).not.toBeNull();
     if (startBox && resetBox) {
@@ -58,9 +58,9 @@ test("keyboard and accessibility smoke", async ({ page }) => {
     return `${style.outlineStyle}:${style.outlineWidth}:${style.boxShadow}`;
   });
   expect(focusStyle).not.toContain("none:0px:none");
-  await expect(page.getByText(/deterministic simulated shopping environment/i)).toBeVisible();
+  await expect(page.getByText(/This is a controlled simulation/i)).toBeVisible();
   await expect(page.getByRole("button", { name: "Start Guided Demo" })).toHaveAccessibleName("Start Guided Demo");
-  await expect(page.getByRole("button", { name: /3.*Safe Action/ })).toBeDisabled();
+  await expect(page.getByRole("button", { name: /3.*Safe Product Action/ })).toBeDisabled();
 });
 
 test("security boundaries remain explicit through the guided browser flow", async ({ page }) => {
@@ -135,9 +135,9 @@ test("security boundaries remain explicit through the guided browser flow", asyn
   await page.getByText("Read-only replay summary").click();
   expect(operationalRequests).toHaveLength(beforeReplay);
   const beforeReset = operationalRequests.length;
-  await click(page, "Reset Guided Demo");
+  await click(page, "Reset Demo");
   expect(operationalRequests).toHaveLength(beforeReset);
-  await expect(page.getByRole("link", { name: "Security Lab" })).toHaveAttribute("href", "/demo/shopping");
+  await expect(page.getByRole("link", { name: "Advanced Security Lab" })).toHaveAttribute("href", "/demo/shopping");
 });
 
 test("backend unavailable is an accessible designed error", async ({ page }) => {

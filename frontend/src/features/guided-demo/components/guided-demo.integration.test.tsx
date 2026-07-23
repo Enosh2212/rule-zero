@@ -94,7 +94,10 @@ describe("Guided Demo complete mocked integration",()=>{
     await click("Continue to Next Stage"); await click("Show Worker Proposal"); expect(proposeWorkerAction).toHaveBeenLastCalledWith(4);
     expect(await screen.findByText(untrusted.evidence)).toBeTruthy();
     await click("Evaluate with Rule Zero"); expect(await screen.findByText("BLOCK")).toBeTruthy();
-    expect(screen.getByText(/RZ-SUB-001/)).toBeTruthy();
+    expect(screen.getByText("Add Premium Membership — ₹199/month")).toBeTruthy();
+    expect(screen.getByText("Subscriptions were prohibited")).toBeTruthy();
+    expect(screen.getByText("A recurring charge was detected")).toBeTruthy();
+    expect(screen.getByText("The instruction came from untrusted webpage content")).toBeTruthy();
     expect(screen.queryByRole("button",{name:/override|execute blocked|approve/i})).toBeNull();
     expect(executeControlledAction).toHaveBeenCalledTimes(1);
 
@@ -118,6 +121,12 @@ describe("Guided Demo complete mocked integration",()=>{
     await click("Continue to Next Stage"); await click("Show Worker Proposal"); expect(proposeWorkerAction).toHaveBeenLastCalledWith(8);
     await click("Evaluate with Rule Zero"); expect(executeControlledAction).toHaveBeenCalledTimes(2);
     await click("Finish Safely"); expect(await screen.findByText(/State version: 3/)).toBeTruthy();
+    expect(screen.getByText("Power bank selected")).toBeTruthy();
+    expect(screen.getByText("Recurring charges")).toBeTruthy();
+    expect(screen.getByText("Payment performed")).toBeTruthy();
+    expect(screen.getByText("Order submitted")).toBeTruthy();
+    expect(screen.getByText("Personal data shared")).toBeTruthy();
+    expect(screen.getByText("User constraints preserved")).toBeTruthy();
     expect(screen.getByText(/Payment performed: no/)).toBeTruthy();
 
     await click("Continue to Next Stage");
@@ -126,7 +135,7 @@ describe("Guided Demo complete mocked integration",()=>{
     fireEvent.click(screen.getByText("Read-only replay summary"));
     expect({worker:proposeWorkerAction.mock.calls.length,evaluate:evaluateProposedAction.mock.calls.length,execute:executeControlledAction.mock.calls.length,approve:decideControlledApproval.mock.calls.length,recover:executeRecoveryStep.mock.calls.length}).toEqual(operationalBeforeReplay);
 
-    fireEvent.click(screen.getByRole("button",{name:/3Safe Action/}));
+    fireEvent.click(screen.getByRole("button",{name:/3.*Safe Product Action/}));
     expect(proposeWorkerAction).toHaveBeenCalledTimes(5);
     expect(evaluateProposedAction).toHaveBeenCalledTimes(5);
     expect(executeControlledAction).toHaveBeenCalledTimes(3);

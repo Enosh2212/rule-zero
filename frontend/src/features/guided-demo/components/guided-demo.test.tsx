@@ -11,9 +11,13 @@ describe("GuidedDemo", () => {
     render(<GuidedDemo />);
     expect(screen.getByText(/Buy a power bank under ₹1,500/)).toBeTruthy();
     expect(screen.getByRole("button", {name:"Start Guided Demo"})).toBeTruthy();
-    expect(screen.getByRole("list", {name:"Guided demo progress"}).children).toHaveLength(9);
+    expect(screen.getByRole("list", {name:"Guided demo progress"}).children).toHaveLength(8);
+    for (const stage of ["Your Mission", "Safety Rules", "Safe Product Action", "Hidden Subscription Attack", "Rule Zero Blocks It", "Safe Recovery", "Payment Boundary", "Verified Outcome"]) {
+      expect(screen.getByRole("button", {name:new RegExp(stage)})).toBeTruthy();
+    }
     expect(screen.queryByText(/Run Everything|Auto Approve|Override Rule Zero/)).toBeNull();
-    expect(screen.getByRole("link", {name:"Security Lab"}).getAttribute("href")).toBe("/demo/shopping");
+    expect(screen.getByRole("link", {name:"Advanced Security Lab"}).getAttribute("href")).toBe("/demo/shopping");
+    expect(screen.getByText(/This is a controlled simulation/)).toBeTruthy();
   });
   it("requires an explicit start, loads backend state, and reset returns to mission", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ok:true,json:async()=>snapshot}));
@@ -21,7 +25,7 @@ describe("GuidedDemo", () => {
     fireEvent.click(screen.getByRole("button", {name:"Start Guided Demo"}));
     expect(await screen.findByRole("button", {name:"Generate Safety Contract"})).toBeTruthy();
     expect(fetch).toHaveBeenCalledTimes(1);
-    fireEvent.click(screen.getByRole("button", {name:"Reset Guided Demo"}));
+    fireEvent.click(screen.getByRole("button", {name:"Reset Demo"}));
     expect(screen.getByRole("button", {name:"Start Guided Demo"})).toBeTruthy();
     expect(fetch).toHaveBeenCalledTimes(1);
   });
@@ -29,7 +33,7 @@ describe("GuidedDemo", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
     render(<GuidedDemo />);
     fireEvent.click(screen.getByRole("button", {name:"Start Guided Demo"}));
-    expect((await screen.findByRole("alert")).textContent).toContain("Mission failed: offline");
+    expect((await screen.findByRole("alert")).textContent).toContain("Your Mission failed: offline");
     expect(screen.getByRole("button", {name:"Start Guided Demo"})).toBeTruthy();
   });
 });

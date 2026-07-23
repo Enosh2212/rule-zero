@@ -467,3 +467,24 @@ Attempt to break the existing Phase 2–8 safety boundaries with deterministic h
 - Targeted adversarial/configuration pytest: 38 passed with the same warning.
 - Chromium Playwright: 9 passed; automation remains test-only.
 - Deployment validator unit/help/expected-failure tests: 3 passed.
+
+## Evaluator-facing UI rescue patch
+
+### Scope
+- Replaced the abstract landing hero with the concrete ₹1,500 power-bank mission, hidden ₹199/month membership attempt, BLOCKED decision, safe-continuation story, and controlled-simulation disclaimer.
+- Added visible, high-contrast landing CTAs for the Guided Demo and Security Lab, including hover, focus, and disabled-state classes.
+- Reframed the Guided Demo as eight evaluator-facing steps while preserving its existing nine internal API checkpoints and all explicit-operation controls.
+- Reduced the Guided Demo to one dominant current scene plus a compact action/decision area, with plain-language attack reasons and a prominent final safety summary.
+- Kept `/demo/shopping` unchanged as the Advanced Security Lab.
+
+### Safety and behavior
+- No backend API, policy, execution, approval, recovery, audit, deployment, or controlled-state behavior changed.
+- No real payment, purchase, order submission, personal-data submission, or navigation capability was added.
+- Playwright found one presentation defect during the patch: the simplified header had lost its semantic navigation landmark. A native labelled `nav` was restored.
+
+### Verification
+- Frontend Vitest: 14 files / 67 tests passed.
+- Frontend ESLint: passed.
+- Frontend production build: passed; `/`, `/demo`, and `/demo/shopping` generated.
+- Chromium Playwright: 9 passed across desktop, tablet, mobile, accessibility, security-flow, and backend-error cases.
+- Backend pytest: 134 passed with one existing Starlette TestClient deprecation warning.

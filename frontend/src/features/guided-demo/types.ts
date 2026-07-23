@@ -5,7 +5,7 @@ import type { ActionEvaluationResponse } from "../interceptor/types";
 import type { RecoveryExecutionResponse, RecoveryPlan } from "../recovery/types";
 import type { ProposedAgentAction } from "../worker/types";
 
-export const GUIDED_STAGES = ["Mission", "Contract", "Safe Action", "Attack", "Recovery", "Approval", "Payment Boundary", "Safe Outcome", "Audit Proof"] as const;
+export const GUIDED_STAGES = ["Your Mission", "Safety Rules", "Safe Product Action", "Hidden Subscription Attack", "Safe Recovery", "Payment Boundary", "Payment Boundary", "Verified Outcome", "Verified Outcome"] as const;
 export type GuidedStage = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type GuidedState = {
