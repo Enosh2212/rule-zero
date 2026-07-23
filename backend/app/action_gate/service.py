@@ -1,11 +1,11 @@
 import hashlib
 import hmac
 import json
-import os
 
 from app.interceptor.engine import evaluate_action
 from app.interceptor.models import ActionEvaluationRequest, EvaluationContext, RuleZeroDecision
 from app.worker.models import AgentActionType
+from app.config import signing_key
 
 from .models import (
     ActionExecutionRequest,
@@ -29,7 +29,7 @@ from .scenario import (
     state_error,
 )
 
-SIGNING_KEY = os.getenv("APPROVAL_SIGNING_KEY", "rule-zero-local-demo-signing-key").encode()
+SIGNING_KEY = signing_key("APPROVAL_SIGNING_KEY", "rule-zero-local-demo-signing-key")
 HARD_REFUSALS = {
     AgentActionType.MAKE_PAYMENT,
     AgentActionType.SUBMIT_ORDER,

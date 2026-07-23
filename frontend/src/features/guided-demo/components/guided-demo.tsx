@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
 import { decideControlledApproval, executeControlledAction, loadShoppingState } from "../../action-gate/api";
 import { appendAudit, startAudit, verifyAudit } from "../../audit/api";
 import type { AuditArtifact, AuditSession } from "../../audit/types";
@@ -19,13 +19,16 @@ const secondary = "rounded-lg border border-white/15 px-4 py-2.5 text-sm font-me
 
 export function GuidedDemo() {
   const [state, dispatch] = useReducer(guidedReducer, initialGuidedState);
+  const inFlight = useRef(false);
   const patch = (value: Partial<GuidedState>) => dispatch({ type:"patch", value });
   const complete = (stage: GuidedStage, extra = {}) => patch({ completed:[...new Set([...state.completed, stage])], ...extra });
 
   async function run(label: string, operation: () => Promise<void>) {
+    if (inFlight.current) return;
+    inFlight.current = true;
     patch({ busy:label, error:null });
     try { await operation(); } catch (error) { patch({ error:`${stageLabel(state.stage)} failed: ${error instanceof Error ? error.message : "Unknown backend error"}` }); }
-    finally { patch({ busy:null }); }
+    finally { inFlight.current = false; patch({ busy:null }); }
   }
   async function record(session: AuditSession | null, artifact: AuditArtifact) {
     if (!session) return null;

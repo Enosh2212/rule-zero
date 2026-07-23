@@ -52,3 +52,11 @@ The entire client-carried session and every submitted artifact are untrusted. Ap
 ## Phase 8 guided-controller threats
 
 The guided controller is presentation state, not authority. Stage readiness cannot authorize an action, frontend status labels cannot manufacture a decision, and client navigation cannot mutate canonical state. Every proposal, evaluation, execution, approval, recovery, and verification result comes from its existing backend boundary. BLOCK never exposes execution or approval, ASK APPROVAL never auto-approves, and recovery never auto-runs. Audit recording failure is separated from the completed operation so retrying evidence cannot repeat the consequence.
+
+## Phase 9 adversarial evaluation threats
+
+Phase 9 treats evaluation fixtures as hostile: provenance may lie, prices may be disguised in prose, payload prices may be forged, costs may accumulate across steps, redirect targets may conceal a second destination, and sensitive fields may use innocuous labels. Typed schema validation, contract permissions, canonical context, decision precedence, fresh Gate evaluation, signed approval/recovery bindings, and audit verification remain unchanged. Test evidence is not promoted into production authority.
+
+Browser automation is permitted only as a test harness boundary. No browser library, arbitrary URL input, or automation control may be imported by runtime Worker, policy, execution, recovery, audit, or Guided Demo modules.
+
+Release configuration is hostile until validated. Production startup fails closed when CORS origins or signing keys are missing or weak. Browser-visible environment variables are public by definition and may contain only the API origin. Rapid duplicate UI events are treated as replay attempts and stopped at the Guided Demo in-flight boundary; backend state versions and signed approvals remain the authoritative second layer.

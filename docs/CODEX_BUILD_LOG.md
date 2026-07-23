@@ -174,6 +174,8 @@ Implement a deterministic, stateless, naive Shopping Trap worker that emits one 
 - `npm run build`: passed; `/demo/shopping` statically generated.
 - Backend `pytest`: 27 tests passed with one existing Starlette TestClient dependency warning.
 - `git diff --check`: passed.
+
+
 - Source audit found no cart/contract mutation coupling, execution result, Phase 4 decision/control, LLM, browser automation, persistence, database, or payment integration.
 - No diff exists in the Phase 1 cart reducer/cart controls or Phase 2 Task Contract panel.
 
@@ -397,3 +399,48 @@ Create a polished nine-stage evaluator journey while retaining the Phase 1–7 S
 - `npm run build`: passed; `/`, `/demo`, and `/demo/shopping` generated.
 - Backend pytest through the repository virtual environment: 96 tests passed with one existing Starlette TestClient deprecation warning.
 - `git diff --check`: passed.
+
+## Phase 9 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 9 — Security Evals and Adversarial Testing
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Attempt to break the existing Phase 2–8 safety boundaries with deterministic hostile inputs, publish results, and make no runtime authority changes.
+
+### Codex work
+- Added 26 parameterized adversarial backend cases for prompt injection, recurring-charge obfuscation, cumulative budget drift, price/category spoofing, unknown financial impact, redirect chains, sensitive-data exfiltration, source-trust spoofing, missing budgets, malformed schemas, and false-positive controls.
+- Reused the existing Interceptor endpoint and typed models; no policy rule or runtime route was added.
+- Published `docs/EVALUATION_MATRIX.md` with a 100% critical and false-positive threshold, coverage mapping, metrics, reproduction commands, and residual limitations.
+- Added the reusable Phase 9 prompt and documented the test-only browser-automation boundary.
+
+### Initial evidence
+- Targeted adversarial pytest: 26 passed with one existing Starlette TestClient deprecation warning.
+- No production defect was found by the new matrix.
+
+### Verification
+- Full backend pytest: 122 tests passed with one existing Starlette TestClient deprecation warning.
+- `npm run test`: 13 files, 63 tests passed.
+- `npm run lint`: passed without warnings.
+- `npm run build`: passed; `/`, `/demo`, and `/demo/shopping` generated.
+- `git diff --check`: passed.
+- Runtime/deployment source audit found no browser-automation import, new endpoint, policy change, deployment configuration, authentication, persistence, LLM, or Phase 10 implementation.
+
+### Result
+- Completed; the published deterministic matrix met its 100% critical and false-positive threshold.
+- Remaining risks are documented in `docs/EVALUATION_MATRIX.md`; they include structured provenance, no domain redirect resolution, bounded semantic price parsing, and stateless audit completeness.
+
+## Phase 9 acceptance closure
+
+- Added test-only Playwright with nine Chromium cases for three routes, three responsive viewports, accessibility smoke, the live security flow, and backend unavailability.
+- Added push/PR GitHub Actions CI using Node 22 and Python 3.13, including unit/regression/browser tests, build/lint, whitespace, and secret checks.
+- Added a deterministic lightweight secret scanner and documented its current-tree limitations.
+- Centralized backend CORS and signing-key configuration. Production now rejects localhost/missing CORS plus missing, short, and placeholder approval/recovery/audit keys.
+- Added frontend request timeouts and a synchronous Guided Demo in-flight lock after browser testing demonstrated a theoretical same-tick duplicate-event window.
+- Browser testing found and resolved test isolation issues: Vitest/Playwright discovery overlap, development HMR console noise, and collisions with existing local servers. The final harness uses a production build on isolated ports.
+- Dependency review: backend `pip-audit` found no known vulnerabilities; frontend `npm audit` reports one moderate PostCSS and two high Next/sharp aggregate findings. No unsafe forced downgrade was applied.
+- Added `SECURITY_EVAL_REPORT.md` and `RELEASE_READINESS_CHECKLIST.md` with a CONDITIONAL GO for controlled evaluation and NO-GO for production deployment.
+- Final verification: frontend 14 files / 65 tests; backend 133 tests; targeted adversarial/configuration 37 tests; Chromium 9 tests; lint, build, secret scan, workflow YAML parse, runtime Playwright-import scan, and `git diff --check` all passed.
+- Browser viewport results: desktop 1440×900, tablet 820×1180, and mobile 390×844 passed overflow, readability, navigation, status, and overlap checks.

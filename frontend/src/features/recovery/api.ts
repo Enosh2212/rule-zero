@@ -1,13 +1,12 @@
 import type { TaskContract } from "../contracts/types";
 import type { ControlledShoppingState } from "../action-gate/types";
 import type { RecoveryExecutionResponse, RecoveryPlan, RecoveryPlanRequest } from "./types";
+import { requestJson } from "../api-client";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 async function post<T>(path: string, body: object): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  if (!response.ok) throw new Error(`Recovery request failed (${response.status})`);
-  return response.json() as Promise<T>;
+  return requestJson<T>(`${API_URL}${path}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }, "Recovery request failed");
 }
 
 export async function generateRecoveryPlan(request: RecoveryPlanRequest): Promise<RecoveryPlan> {

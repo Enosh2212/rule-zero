@@ -1,7 +1,6 @@
 import hashlib
 import hmac
 import json
-import os
 
 from app.action_gate.models import ActionExecutionRequest, ExecutionStatus
 from app.action_gate.scenario import MEMBERSHIP_ID, WARRANTY_ID, state_error
@@ -14,6 +13,7 @@ from app.worker.models import (
     AgentActionType,
     ProposedAgentAction,
 )
+from app.config import signing_key
 
 from .models import (
     RecoveryActionStatus,
@@ -29,7 +29,7 @@ from .models import (
     RecoveryTrigger,
 )
 
-RECOVERY_KEY = os.getenv("RECOVERY_SIGNING_KEY", "rule-zero-local-recovery-signing-key").encode()
+RECOVERY_KEY = signing_key("RECOVERY_SIGNING_KEY", "rule-zero-local-recovery-signing-key")
 
 
 class RecoveryValidationError(ValueError):

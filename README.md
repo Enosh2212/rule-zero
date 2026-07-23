@@ -135,4 +135,18 @@ Rule Zero evaluates consequential agent actions before execution.
 
 ## Status
 
-Phase 8 — guided evaluator experience and UI consolidation. The detailed Security Lab remains available. Phase 9 has not begun.
+Phase 9 — deterministic adversarial security evaluations. The published matrix covers prompt injection, recurring-charge obfuscation, budget drift, redirects, sensitive-data exfiltration, schema attacks, and false-positive controls. Phase 10 deployment has not begun.
+
+See `docs/EVALUATION_MATRIX.md` for results, thresholds, and residual limitations.
+
+Release evidence is recorded in `docs/SECURITY_EVAL_REPORT.md` and `docs/RELEASE_READINESS_CHECKLIST.md`. The current verdict is conditional for the controlled hackathon demo and explicitly not a production deployment approval.
+
+Browser tests are test-only:
+
+```powershell
+cd frontend
+npx playwright install chromium
+npm run test:e2e
+```
+
+The Playwright harness uses isolated localhost ports and never becomes a Worker or runtime browser capability.

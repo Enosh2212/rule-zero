@@ -1,10 +1,10 @@
 import hashlib
 import hmac
 import json
-import os
 from typing import Any
 
 from pydantic import ValidationError
+from app.config import signing_key
 
 from app.action_gate.models import ActionExecutionResponse, ExecutionStatus
 from app.action_gate.scenario import state_error
@@ -20,10 +20,7 @@ from .models import (
 )
 from .redaction import redact
 
-_configured_audit_key = os.getenv("AUDIT_SIGNING_KEY")
-if os.getenv("ENVIRONMENT", "development").lower() in {"production", "prod"} and not _configured_audit_key:
-    raise RuntimeError("AUDIT_SIGNING_KEY is required in production")
-AUDIT_KEY = (_configured_audit_key or "rule-zero-local-audit-signing-key").encode()
+AUDIT_KEY = signing_key("AUDIT_SIGNING_KEY", "rule-zero-local-audit-signing-key")
 GENESIS_HASH = "0" * 64
 
 

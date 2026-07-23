@@ -1,11 +1,10 @@
 import type { ActionExecutionRequest, ActionExecutionResponse, ApprovalDecisionRequest, ScenarioSnapshot } from "./types";
+import { requestJson } from "../api-client";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 async function json<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, init);
-  if (!response.ok) throw new Error(`Safe Action Gate request failed (${response.status})`);
-  return response.json() as Promise<T>;
+  return requestJson<T>(`${API_URL}${path}`, init, "Safe Action Gate request failed");
 }
 
 export function loadShoppingState(): Promise<ScenarioSnapshot> {

@@ -17,6 +17,31 @@ explicit evaluator click
 
 The controller derives Interceptor financial context from the backend scenario snapshot and backend-returned controlled state, never from Worker price claims or a new client fixture. Revisited stages render stored artifacts and make no operational call. Replay reads audit events only. `/demo/shopping` remains the detailed Security Lab.
 
+## Phase 9 — Evaluation boundary
+
+Phase 9 adds tests and evidence, not runtime architecture. Adversarial fixtures enter the existing typed Phase 2–8 boundaries and assert their returned decisions, refusals, state continuity, and audit integrity. The published matrix is derived from deterministic pytest/Vitest results.
+
+```text
+hostile fixture → existing API/model → existing policy/gate → asserted artifact
+                                                ↘ no alternate executor
+```
+
+Any browser automation remains test-only and has no import path into application code. Phase 9 adds no runtime route, policy rule, Worker capability, deployment configuration, or persistence.
+
+## Phase 9 closure hardening
+
+Backend startup reads `ENVIRONMENT` and `CORS_ORIGINS` through one configuration boundary. Production refuses missing/local CORS origins and missing, short, or placeholder approval/recovery/audit keys. Development retains explicit localhost defaults. Signing material never enters Pydantic response models.
+
+Frontend API clients share a 10-second abort boundary. The Guided Demo additionally holds a synchronous in-flight lock so rapid duplicate events cannot enter execution, recovery, or approval before React paints the disabled state.
+
+Playwright, CI, and the secret scanner are repository test/release controls:
+
+```text
+CI/test process → localhost frontend/backend → existing public typed APIs
+runtime Worker ─X→ Playwright
+runtime API    ─X→ CI or secret scanner
+```
+
 ```text
 User Task
    ↓

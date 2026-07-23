@@ -1,9 +1,10 @@
 import { getApiBaseUrl } from "../contracts/api";
 import { shoppingWorkerObservation } from "./observation";
 import type { WorkerStepResponse } from "./types";
+import { requestJson } from "../api-client";
 
 export async function proposeWorkerAction(stepIndex: number): Promise<WorkerStepResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/api/worker/propose`, {
+  return requestJson<WorkerStepResponse>(`${getApiBaseUrl()}/api/worker/propose`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -12,11 +13,5 @@ export async function proposeWorkerAction(stepIndex: number): Promise<WorkerStep
       contract: null,
       observation: shoppingWorkerObservation,
     }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Worker proposal service returned ${response.status}.`);
-  }
-
-  return (await response.json()) as WorkerStepResponse;
+  }, "Worker proposal request failed");
 }

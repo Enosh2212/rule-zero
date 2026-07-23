@@ -1,4 +1,5 @@
 import type { ContractParseResponse } from "./types";
+import { requestJson } from "../api-client";
 
 const LOCAL_API_URL = "http://localhost:8000";
 
@@ -8,15 +9,9 @@ export function getApiBaseUrl(): string {
 }
 
 export async function parseTaskContract(instruction: string): Promise<ContractParseResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/api/contracts/parse`, {
+  return requestJson<ContractParseResponse>(`${getApiBaseUrl()}/api/contracts/parse`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ instruction, scenario_id: "shopping-trap" }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Contract service returned ${response.status}.`);
-  }
-
-  return (await response.json()) as ContractParseResponse;
+  }, "Contract service request failed");
 }
