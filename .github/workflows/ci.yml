@@ -47,7 +47,7 @@ jobs:
         run: npm run build
       - name: Backend tests
         working-directory: backend
-        run: pytest
+        run: python -m pytest
       - name: Install Chromium
         working-directory: frontend
         run: npx playwright install --with-deps chromium
