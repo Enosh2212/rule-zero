@@ -4,7 +4,13 @@ import { useReducer, useState } from "react";
 import Link from "next/link";
 
 import { TaskContractPanel } from "../../contracts/components/task-contract-panel";
+import type { TaskContract } from "../../contracts/types";
+import { SafeActionGatePanel } from "../../action-gate/components/safe-action-gate-panel";
+import { buildEvaluationContext } from "../../interceptor/context";
+import { RuleZeroInterceptorPanel } from "../../interceptor/components/rule-zero-interceptor-panel";
+import type { ActionEvaluationResponse } from "../../interceptor/types";
 import { WorkerAgentPanel } from "../../worker/components/worker-agent-panel";
+import type { ProposedAgentAction } from "../../worker/types";
 
 import { applyCartAction, initialCartState } from "../cart";
 import { calculateCartTotals, formatInr } from "../pricing";
@@ -16,7 +22,11 @@ import { ProductCatalogue } from "./product-catalogue";
 export function ShoppingStorefront() {
   const [cart, dispatch] = useReducer(applyCartAction, initialCartState);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [taskContract, setTaskContract] = useState<TaskContract | null>(null);
+  const [latestProposal, setLatestProposal] = useState<ProposedAgentAction | null>(null);
+  const [latestEvaluation, setLatestEvaluation] = useState<ActionEvaluationResponse | null>(null);
   const totals = calculateCartTotals(shoppingTrapScenario, cart);
+  const evaluationContext = latestProposal ? buildEvaluationContext(latestProposal, cart) : null;
 
   return (
     <main className="min-h-screen bg-[#08090b] text-zinc-100">
@@ -33,9 +43,13 @@ export function ShoppingStorefront() {
           <div className="rounded-xl border border-white/10 bg-white/[0.035] px-5 py-4"><span className="block text-xs text-zinc-500">Example user budget</span><span className="mt-1 block text-2xl font-semibold">{formatInr(shoppingTrapScenario.exampleBudget)}</span></div>
         </section>
 
-        <TaskContractPanel />
+        <TaskContractPanel onContractChange={setTaskContract} />
 
-        <div className="mt-8"><WorkerAgentPanel /></div>
+        <div className="mt-8"><WorkerAgentPanel onProposalChange={setLatestProposal} /></div>
+
+        <div className="mt-8"><RuleZeroInterceptorPanel proposedAction={latestProposal} contract={taskContract} context={evaluationContext} onEvaluationChange={setLatestEvaluation} /></div>
+
+        <div className="mt-8"><SafeActionGatePanel proposedAction={latestProposal} contract={taskContract} evaluation={latestEvaluation} /></div>
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           <div className="space-y-8"><ProductCatalogue products={shoppingTrapScenario.products} quantities={cart.quantities} dispatch={dispatch} /><EvidenceDrawer scenario={shoppingTrapScenario} /></div>

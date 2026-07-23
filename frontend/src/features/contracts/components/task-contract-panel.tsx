@@ -77,7 +77,7 @@ export function ContractPreview({ contract }: Readonly<{ contract: TaskContract 
   );
 }
 
-export function TaskContractPanel() {
+export function TaskContractPanel({ onContractChange }: Readonly<{ onContractChange?: (contract: TaskContract | null) => void }>) {
   const [instruction, setInstruction] = useState(DEFAULT_TASK_INSTRUCTION);
   const [contract, setContract] = useState<TaskContract | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -91,8 +91,10 @@ export function TaskContractPanel() {
     try {
       const response = await parseTaskContract(instruction);
       setContract(response.contract);
+      onContractChange?.(response.contract);
     } catch {
       setContract(null);
+      onContractChange?.(null);
       setError("Unable to generate the safety contract. Confirm the local backend is running and try again.");
     } finally {
       setIsLoading(false);

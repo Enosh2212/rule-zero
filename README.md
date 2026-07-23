@@ -70,6 +70,14 @@ Worker proposal API:
 POST http://localhost:8000/api/worker/propose
 ```
 
+Rule Zero evaluation API:
+
+```text
+POST http://localhost:8000/api/interceptor/evaluate
+```
+
+The Phase 4 interceptor returns deterministic `ALLOW`, `BLOCK`, or `ASK_APPROVAL` decisions with rule findings, contract conflicts, consequence assessment, and trace. `execution_occurred` is always false.
+
 The Phase 3 worker is a deterministic, stateless simulator. It emits typed proposals only; it cannot change the cart, cross checkout, submit an order, or make a payment.
 
 The frontend uses `NEXT_PUBLIC_API_URL` and safely defaults to `http://localhost:8000` for local development. Copy `frontend/.env.example` to `frontend/.env.local` only when you need to override that URL.
@@ -81,10 +89,20 @@ cd backend
 pytest
 ```
 
+## Phase 5 Safe Action Gate APIs
+
+```text
+GET  http://localhost:8000/api/scenarios/shopping-trap/state
+POST http://localhost:8000/api/actions/execute
+POST http://localhost:8000/api/approvals/decide
+```
+
+Phase 5 adds manual, server-revalidated execution for controlled local Shopping Trap state. `ALLOW` requires an explicit click, `BLOCK` is refused, and `ASK_APPROVAL` requires an exact action/contract/state-bound decision. Payment, order submission, data disclosure, and real navigation never execute. Autonomous recovery remains reserved for Phase 6.
+
 ## Product principle
 
 No consequential action should execute only because a model requested it. Rule Zero combines deterministic policy checks, semantic threat analysis, human approval boundaries, and evidence-first auditing.
 
 ## Status
 
-Phase 3 — deterministic Worker Action Protocol. Worker output is proposal-only; Rule Zero evaluation and action execution are reserved for later phases.
+Phase 5 — Safe Action Gate. Controlled local execution and exact-action approval handling are implemented; autonomous recovery remains reserved for Phase 6.

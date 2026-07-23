@@ -43,7 +43,7 @@ function ActionDetails({ action }: Readonly<{ action: ProposedAgentAction }>) {
   );
 }
 
-export function WorkerAgentPanel() {
+export function WorkerAgentPanel({ onProposalChange }: Readonly<{ onProposalChange?: (action: ProposedAgentAction | null) => void }>) {
   const [nextStepIndex, setNextStepIndex] = useState(0);
   const [currentAction, setCurrentAction] = useState<ProposedAgentAction | null>(null);
   const [history, setHistory] = useState<ProposedAgentAction[]>([]);
@@ -58,6 +58,7 @@ export function WorkerAgentPanel() {
     try {
       const response = await proposeWorkerAction(stepIndex);
       setCurrentAction(response.proposed_action);
+      onProposalChange?.(response.proposed_action);
       setHistory((existing) => [...existing, response.proposed_action]);
       setNextStepIndex(response.next_step_index);
       setIsComplete(response.is_complete);
@@ -81,6 +82,7 @@ export function WorkerAgentPanel() {
     setIsLoading(false);
     setIsComplete(false);
     setError(null);
+    onProposalChange?.(null);
   }
 
   return (

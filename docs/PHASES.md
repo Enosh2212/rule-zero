@@ -43,6 +43,8 @@
 
 **Exit gate:** known unsafe actions are blocked before state mutation.
 
+**Status:** implemented as a deterministic evaluation-only boundary; execution and recovery remain unimplemented.
+
 ## Phase 5 — Recovery and Human Control
 - Remove unsafe add-ons and choose a safe alternative
 - Pause for consequential or ambiguous actions
@@ -50,6 +52,8 @@
 - Prevent retry loops and policy bypass
 
 **Exit gate:** agent safely continues or stops after each blocked action.
+
+**Phase 5 implementation note:** the delivered scope is the Safe Action Gate: canonical server revalidation, controlled local execution, exact-action approval/rejection, and terminal `BLOCK` enforcement. Autonomous recovery and safe-alternative generation remain Phase 6 work.
 
 ## Phase 6 — Mission Control UI
 - Task input and scenario selector

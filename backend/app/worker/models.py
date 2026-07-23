@@ -42,7 +42,18 @@ class ActionSource(WorkerModel):
 
 
 class ActionTarget(WorkerModel):
-    type: Literal["catalogue", "product", "cart", "addon", "checkout", "payment", "task"]
+    type: Literal[
+        "catalogue",
+        "product",
+        "cart",
+        "addon",
+        "checkout",
+        "payment",
+        "task",
+        "order",
+        "field",
+        "external",
+    ]
     id: str = Field(min_length=1)
 
 

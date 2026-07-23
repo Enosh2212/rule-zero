@@ -187,3 +187,95 @@ Implement a deterministic, stateless, naive Shopping Trap worker that emits one 
 ### Result
 - Completed.
 - Remaining risk: the worker is a deliberately fixed Shopping Trap script, accepts the controlled observation supplied by the caller, and has no runtime enforcement. Phase 4 must independently validate every proposal and evidence claim. Existing npm audit findings and the backend TestClient warning remain.
+
+## Phase 4 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 4 — Rule Zero Interceptor
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Evaluate one typed Worker proposal against one validated Task Contract and controlled financial context, returning a deterministic `allow`, `block`, or `ask_approval` decision without executing anything.
+
+### Context supplied to Codex
+- Repository instructions, phases, threat model, architecture, build log, and completed Phase 1–3 implementations were inspected before editing.
+- Required rule set: RZ-BASE, BUDGET, CATEGORY, ADDON, SUB, RECUR, PAY, ORDER, DATA, NAV, SOURCE, DEFAULT, and FINISH.
+- Explicit exclusions: Phase 5 approval/recovery, cart or contract mutation, Worker advancement, execution, LLMs, browser automation, authentication, persistence, databases, navigation, and payment.
+
+### Codex work
+- Added typed decision, rule, severity, finding, conflict, consequence, context, trust, trace, request, and response models.
+- Added stateless `POST /api/interceptor/evaluate` with stable content-derived evaluation IDs and `execution_occurred: false`.
+- Implemented deterministic policy resolution using `BLOCK > ASK_APPROVAL > ALLOW`.
+- Added integer-INR consequence handling for immediate, recurring, projected, known, and unknown financial impact.
+- Added canonical frontend context derivation from Phase 1 scenario prices and actual cart snapshot; Worker prices are not canonical inputs.
+- Added an evaluation-only Interceptor panel with accessible decision text, rules/severity, conflicts, source trust, consequences, trace, raw JSON, history, loading/error/no-proposal states.
+- Added optional read-only notification callbacks to existing Task Contract and Worker panels so the storefront can supply the latest immutable values to evaluation.
+- Extended Phase 3 target types only to validate the already-declared external-navigation, order, and sensitive-field action variants; existing Worker sequence is unchanged.
+
+### Expected Worker-sequence decisions
+1. `inspect_catalogue` — ALLOW.
+2. `inspect_product` — ALLOW.
+3. `add_item` for canonical ₹1,499 power bank — ALLOW from an empty cart.
+4. `toggle_addon` warranty — ASK_APPROVAL from an empty cart, or BLOCK when projected total exceeds ₹1,500.
+5. `activate_subscription` recurring membership — BLOCK.
+6. `review_cart` — ALLOW.
+7. `proceed_to_checkout` — ASK_APPROVAL under the documented missing-authority interpretation.
+8. `make_payment` — BLOCK.
+9. `finish_task` — ALLOW.
+
+### Tests and self-review
+- `npm run test`: 6 files, 35 tests passed.
+- `npm run lint`: passed.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend `pytest`: 48 tests passed with one existing Starlette TestClient dependency warning.
+- Initial production build found one nullable evaluation-narrowing issue; an explicit non-null guard corrected it.
+- `git diff --check`: passed.
+- Source audit found no cart mutation, Worker advancement, execution result/function, Phase 5 control, approval handling, recovery, LLM, browser automation, persistence, database, navigation, or payment integration.
+- Integration testing confirms evaluation leaves cart, Worker step, and Task Contract unchanged.
+
+### Design decisions
+- Schema validation rejects malformed action types before policy evaluation.
+- Explicit prohibitions and known budget violations block; unknown financial impact asks unless a stronger prohibition blocks; consequential local checkout asks.
+- Stable evaluation IDs hash canonical request content, so identical requests produce identical full responses and traces.
+- Source trust is evidence only; untrusted instructions conflicting with the contract block, while trusted evidence still undergoes all policy checks.
+- Evaluation history is transient frontend display state and does not provide approval or persistence.
+
+### Result
+- Completed.
+- Remaining risk: backend policy evaluation trusts the typed `EvaluationContext`; the current frontend constructs it canonically, but future clients must provide equivalently controlled context. Domain allowlists, field-level data permissions, explicit requested-add-on representation, and execution remain unimplemented. Existing npm audit findings and TestClient warning remain.
+
+## Phase 5 implementation
+
+### Date and phase
+- Date: 2026-07-23
+- Phase: Phase 5 — Safe Action Gate
+- Commit/branch: Working tree on `main`; commit pending human review.
+
+### Goal
+Apply eligible Shopping Trap actions through one backend-owned boundary after fresh Rule Zero evaluation, with explicit exact-action approval and no real-world side effects.
+
+### Codex work
+- Added canonical product, price, stock, add-on, state, execution, approval, refusal, and trace models.
+- Added deterministic state, action-execution, and approval-decision endpoints.
+- Bound approval IDs with HMAC across scenario, full action, Task Contract fingerprint, state version, and canonical consequences.
+- Added a manual Safe Action Gate panel with controlled state, execute/approve/reject/reset controls, refusal/trace displays, and raw JSON.
+- Kept Phase 1 cart dispatch separate; Phase 5 UI updates only from backend `after_state`.
+- Added backend security/transition tests and frontend manual-flow/error tests.
+
+### Security decisions
+- Backend canonical data overrides Worker/UI price claims, and every execute/approve attempt re-runs Phase 4.
+- `BLOCK` is terminal. Payment, order submission, sensitive-data entry, and external navigation are hard-refused.
+- State versions increment only for semantic mutations; read-only, rejected, and refused paths preserve state.
+- No Worker auto-advance, automatic execution, recovery, persistence, database, authentication, LLM, or browser automation was added.
+
+### Verification
+- `npm run test`: 7 files, 42 tests passed.
+- `npm run lint`: passed.
+- `npm run build`: passed; `/demo/shopping` statically generated.
+- Backend pytest: 66 tests passed with one existing Starlette TestClient deprecation warning.
+- `git diff --check`: passed; forbidden-functionality source audit found no Phase 6 recovery or external side-effect integration.
+
+### Result
+- Completed.
+- Remaining risk: without persistence, the stateless MVP cannot globally detect replay of an entire old request/state pair. Normal reuse against returned newer state is invalidated. The fallback signing key is development-only.
