@@ -173,3 +173,11 @@ The frontend requires a click to generate a plan, another click for each step, a
 Audit is a sixth observer-only boundary. It accepts completed typed outputs, validates their scenario/action/evaluation/approval/recovery/state relationships, creates a redacted digest, and appends one HMAC-linked event. It imports typed schemas but invokes none of the operational Phase 3–6 services.
 
 The stateless client carries the full session; the server verifies every event, sequence, previous hash, HMAC, relationship, and state transition before append. Replay is a frontend-only cursor over recorded events and cannot update live state or issue operational requests. See `docs/AUDIT_AND_REPLAY_MODEL.md`.
+
+## Phase 10A — Deployment boundary
+
+The standard Next.js frontend is deployable from `frontend` on Vercel and continues to reach every backend API through the centralized client, `NEXT_PUBLIC_API_URL`, and its bounded timeout. No server signing material is part of the frontend environment.
+
+The FastAPI backend is deployable from `backend` on Render with Python 3.13 and `/health` as its health check. Production configuration is validated before the application is created: three independent signing keys are mandatory and missing, short, or placeholder values fail closed; CORS requires explicit origins and rejects localhost and wildcard values.
+
+`scripts/verify_deployment.py` is an operator-side smoke checker, not runtime browser automation or agent authority. It reads public routes and invokes proposal/evaluation-only endpoints. It cannot approve, execute, recover, pay, submit, navigate, persist, or alter controlled state.

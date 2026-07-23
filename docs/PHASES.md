@@ -97,7 +97,7 @@
 
 **Exit gate:** published evaluation matrix passes the agreed threshold.
 
-**Status:** implemented and release-hardened. The deterministic matrix, browser suite, environment validation, CI, and lightweight secret guard pass. Verdict is conditional for the controlled demo; Phase 10 deployment has not begun.
+**Status:** implemented and release-hardened. The deterministic matrix, browser suite, environment validation, CI, and lightweight secret guard pass. Phase 10A preparation is documented below; no deployment exists.
 
 ## Phase 10 — Deployment and Reliability
 - Vercel frontend and Render backend
@@ -116,3 +116,7 @@
 - Final submission checklist
 
 **Exit gate:** every mandatory link works in an incognito window.
+
+## Phase 10A delivery note
+
+Deployment preparation is implemented: Render/Vercel settings, fail-closed production configuration, operator guides, and an offline validation script are present. Nothing has been deployed. Live reliability, observability, rate-limit disposition, rollback execution, and clean-device checks remain incomplete, and Phase 11 has not begun.

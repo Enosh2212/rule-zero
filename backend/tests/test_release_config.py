@@ -85,6 +85,20 @@ def test_strong_production_configuration_imports() -> None:
     assert result.returncode == 0, result.stderr
 
 
+def test_production_wildcard_cors_is_rejected() -> None:
+    result = run_import(
+        {
+            "ENVIRONMENT": "production",
+            "CORS_ORIGINS": "*",
+            "APPROVAL_SIGNING_KEY": "approval-production-key-32-characters-minimum",
+            "RECOVERY_SIGNING_KEY": "recovery-production-key-32-characters-minimum",
+            "AUDIT_SIGNING_KEY": "audit-production-key-value-32-characters",
+        }
+    )
+    assert result.returncode != 0
+    assert "wildcard" in result.stderr
+
+
 def test_health_and_normal_validation_errors_expose_no_internal_secrets() -> None:
     health = client.get("/health")
     assert health.status_code == 200

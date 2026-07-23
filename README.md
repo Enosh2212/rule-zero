@@ -135,7 +135,7 @@ Rule Zero evaluates consequential agent actions before execution.
 
 ## Status
 
-Phase 9 — deterministic adversarial security evaluations. The published matrix covers prompt injection, recurring-charge obfuscation, budget drift, redirects, sensitive-data exfiltration, schema attacks, and false-positive controls. Phase 10 deployment has not begun.
+Phase 10A — deployment preparation for the controlled hackathon demo. Phase 9 evaluation evidence remains current; platform configuration, fail-closed production settings, and validation guidance are ready, but nothing has been deployed.
 
 See `docs/EVALUATION_MATRIX.md` for results, thresholds, and residual limitations.
 
@@ -150,3 +150,15 @@ npm run test:e2e
 ```
 
 The Playwright harness uses isolated localhost ports and never becomes a Worker or runtime browser capability.
+
+## Phase 10A deployment preparation
+
+The controlled demo is prepared for a standard Vercel Next.js frontend and Render Python 3.13 backend. Production startup fails closed for missing or weak signing keys and missing, localhost, or wildcard CORS configuration. Nothing has been deployed, and Phase 11 has not begun.
+
+Exact platform fields, environment ordering, safe key generation, validation, and paired rollback are documented in `docs/DEPLOYMENT_GUIDE.md` and `docs/DEPLOYMENT_VALIDATION.md`.
+
+After an authorized deployment, run:
+
+```powershell
+python scripts/verify_deployment.py --frontend-url https://<vercel-host> --backend-url https://<render-host>
+```

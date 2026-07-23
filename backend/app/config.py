@@ -28,6 +28,8 @@ def cors_origins() -> list[str]:
     origins = [origin.strip().rstrip("/") for origin in configured.split(",") if origin.strip()]
     if not origins:
         raise RuntimeError("CORS_ORIGINS must contain at least one origin")
+    if is_production() and any(origin == "*" for origin in origins):
+        raise RuntimeError("CORS_ORIGINS cannot use a wildcard in production")
     if is_production() and any("localhost" in origin or "127.0.0.1" in origin for origin in origins):
         raise RuntimeError("CORS_ORIGINS cannot use localhost in production")
     return origins

@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: rule-zero-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: CORS_ORIGINS
+        sync: false
+      - key: APPROVAL_SIGNING_KEY
+        sync: false
+      - key: RECOVERY_SIGNING_KEY
+        sync: false
+      - key: AUDIT_SIGNING_KEY
+        sync: false

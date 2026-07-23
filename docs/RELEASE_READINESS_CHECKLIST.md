@@ -26,8 +26,8 @@ Verdict: **CONDITIONAL GO for controlled hackathon evaluation; NO-GO for product
 ## Automated verification
 
 - [x] Frontend Vitest: 65 tests.
-- [x] Backend pytest: 133 tests.
-- [x] Targeted adversarial evaluations: 26 tests.
+- [x] Backend pytest: 134 tests.
+- [x] Targeted adversarial/configuration tests: 38 tests.
 - [x] Chromium Playwright: 9 tests.
 - [x] Frontend lint and production build.
 - [x] CI workflow covers push and pull request.
@@ -45,11 +45,14 @@ Verdict: **CONDITIONAL GO for controlled hackathon evaluation; NO-GO for product
 
 - [x] Development localhost CORS fallback is explicit.
 - [x] Production requires `CORS_ORIGINS`; localhost is rejected.
+- [x] Production wildcard CORS is rejected.
 - [x] Production requires three strong, non-placeholder signing keys.
 - [x] Signing keys are backend-only and absent from API models/responses.
 - [x] `NEXT_PUBLIC_API_URL` is configurable.
 - [x] No sensitive request-body logging was introduced.
 - [x] Strict typed request validation remains enabled.
+- [x] Exact Render/Vercel fields, safe key generation, CORS order, and paired rollback are documented.
+- [x] The post-deployment validator covers public routes, core non-mutating APIs, CORS, timeouts, and common secret markers.
 - [ ] Configure deployment secrets and public origins in the eventual hosting platform.
 - [ ] Confirm TLS, logging, monitoring, rate limits, and rollback automation in Phase 10.
 
@@ -63,8 +66,8 @@ Verdict: **CONDITIONAL GO for controlled hackathon evaluation; NO-GO for product
 
 ## Rollback approach
 
-No deployment exists in Phase 9. Before any future release, create an immutable versioned artifact and retain the previous known-good version. A rollback must restore frontend and backend together because typed contracts are version-coupled. Never roll back by weakening signing-key or CORS validation.
+No deployment exists after Phase 10A preparation. Before release, retain previous known-good frontend and backend deploys. A rollback must restore them together because typed contracts are version-coupled. Never roll back by weakening signing-key or CORS validation.
 
 ## Final decision
 
-The controlled evaluator build is a **CONDITIONAL GO** because all required deterministic checks pass. Public production release is **NO-GO** until Phase 10 deployment prerequisites, dependency disposition, production secrets/origins, observability, and operational rollback are completed.
+The controlled evaluator build remains a **CONDITIONAL GO** because deterministic checks and deployment preparation pass. A live release remains **NO-GO** until dependency disposition, production secrets/origins, TLS/log/cold-start checks, monitoring, and paired rollback validation are completed.
